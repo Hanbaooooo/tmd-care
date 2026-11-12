@@ -34,6 +34,7 @@ function formatDate(str) {
 
 Page({
   data: {
+    buildTag: '',
     greeting: '你好',
     dateLine: '',
     signedIn: false,
@@ -70,6 +71,29 @@ Page({
     }
     this.setData({ greeting: greetingText(), dateLine: dateLine() });
     this.refresh();
+  },
+
+  onReady() {
+    this.probe();
+  },
+
+  // 临时诊断：把窗口高度与 .page 盒子高度打到屏幕上
+  probe() {
+    let w = {};
+    try {
+      w = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    } catch (e) {
+      w = {};
+    }
+    wx.createSelectorQuery()
+      .select('.page')
+      .boundingClientRect((r) => {
+        const wh = Math.round(w.windowHeight || 0);
+        const sh = Math.round(w.screenHeight || 0);
+        const ph = r ? Math.round(r.height) : -1;
+        this.setData({ buildTag: 'B2110 W' + wh + ' S' + sh + ' P' + ph });
+      })
+      .exec();
   },
 
   onPullDownRefresh() {

@@ -28,7 +28,11 @@ page {
   --alert: #96564A;
   --alert-bg: rgba(150, 86, 74, 0.1);
 
-  min-height: 100%;
+  /* 必须是 100vh，不能是 100%：
+     100% 是相对于父级高度，微信里 html/body 高度为 auto 时会退化成内容高度，
+     结果 page 盒子只到内容结束处，下面的区域露的是 window.backgroundColor。
+     两个颜色只要差一点点，就是一条横贯屏幕的硬边（之前反复出现的"分层"）。 */
+  min-height: 100vh;
   /* 全局只有一个底色 #F6FBF9，且必须与下面三处完全一致：
        app.json → window.backgroundColor
        app.json → tabBar.backgroundColor
@@ -81,6 +85,24 @@ view, text {
     rgba(246, 251, 249, 0.92) 62%,
     #F6FBF9 100%
   );
+}
+
+/* 临时诊断标记：用来确认真机跑的是哪一版代码 + 页面盒子几何。
+   确认完删掉（app.wxss 这段 + 各页面 wxml 里的一行 build-tag）。 */
+.build-tag {
+  position: fixed;
+  left: 20rpx;
+  bottom: calc(180rpx + env(safe-area-inset-bottom));
+  z-index: 999;
+  padding: 4rpx 10rpx;
+  font-size: 18rpx;
+  line-height: 1.4;
+  letter-spacing: 0.5rpx;
+  color: rgba(30, 47, 41, 0.5);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1rpx solid rgba(30, 47, 41, 0.14);
+  border-radius: 8rpx;
+  pointer-events: none;
 }
 
 /* ---------- 文本层级 ---------- */

@@ -1,4 +1,5 @@
 <bg-layer />
+<view class="build-tag">{{buildTag}}</view>
 <view class="page tab-page">
   <nav-bar />
   <view class="h1">六周计划</view>
