@@ -83,7 +83,7 @@ images/                        静态图
 | 位置 | 说明 |
 |---|---|
 | `app.wxss` | 全局设计令牌（颜色、线条、圆角）都在这里。**改颜色只改这里**，不要在页面里写死色值 |
-| `components/bg-layer` | 背景是 `position: fixed` 铺满视口的独立层。**不要再往 `page` 上画背景**——页面内容高度变化会让背景盒重排，真机上会出现横向分层硬边 |
+| `components/bg-layer` | 背景是 `position: fixed` 铺满视口的独立层，**只放 96rpx 平铺颗粒，不放任何随高度变化的渐变**。全站底色只有 `#F6FBF9` 一个值，必须与 `app.json` 的 `window.backgroundColor`、`tabBar.backgroundColor` 完全一致。任何一处不一致，页面盒子边缘就会露出一条色带（真机上的"分层"） |
 | `data/scales.js` | 研究端量表（含版本档案与分级阈值） |
 | `data/psych.js` | 患者端心理与行为评估（GAD-7 / PHQ-4 / OBC / JFLS-8） |
 | `data/course.js` | 六周课程内容与文案 |

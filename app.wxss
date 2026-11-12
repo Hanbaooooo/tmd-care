@@ -29,10 +29,15 @@ page {
   --alert-bg: rgba(150, 86, 74, 0.1);
 
   min-height: 100%;
-  /* 兜底底色刻意取背景层竖向渐变的末端色（#EFF7F4）。
-     万一某台机器上 fixed 层只铺了半屏，露出来的也是同色，
-     不会出现"上下两块颜色"的硬边。改渐变末端色时必须同步改这里。 */
-  background-color: #EFF7F4;
+  /* 全局只有一个底色 #F6FBF9，且必须与下面三处完全一致：
+       app.json → window.backgroundColor
+       app.json → tabBar.backgroundColor
+       components/bg-layer/bg-layer.wxss → background-color
+     任何一处不同，页面盒子边缘就会露出一条色带（"分层"）。
+     曾经用竖向渐变做主底，某些机型上 page 盒子只有内容高度，
+     渐变被裁在半屏处 → 出现硬边。现在改成单色 + 固定层只负责颗粒，
+     盒子多高都不会出现第二种颜色。 */
+  background-color: #F6FBF9;
   color: var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
   font-size: 30rpx;
