@@ -1,0 +1,451 @@
+/* ==========================================================
+   设计令牌：磨砂玻璃底 · 苔绿主色 · 石青辅助 · 零暖黄
+   底色不是一块填色：三层超大半径的极淡光 + 一层 96rpx 的中性颗粒，
+   远看是均匀的透光玻璃，近看有细微厚度
+   ========================================================== */
+page {
+  --paper: #F4FAF8;
+  --paper-2: #E8F1EE;
+  --surface: rgba(255, 255, 255, 0.62);
+  --surface-sunk: rgba(255, 255, 255, 0.32);
+  --glass: rgba(255, 255, 255, 0.42);
+
+  --ink: #1E2F29;
+  --ink-2: #4F635A;
+  --ink-3: #84958C;
+
+  --moss: #38614F;
+  --moss-press: #2C4F41;
+  --moss-soft: #8FA79A;
+  --sage: #C2D5C8;
+  --sage-bg: rgba(194, 213, 200, 0.32);
+
+  --line: rgba(30, 47, 41, 0.115);
+  --line-soft: rgba(30, 47, 41, 0.07);
+
+  --note: #5C7A85;
+  --note-bg: rgba(92, 122, 133, 0.1);
+  --alert: #96564A;
+  --alert-bg: rgba(150, 86, 74, 0.1);
+
+  min-height: 100%;
+  /* 只留纯色兜底：渐变与颗粒交给 <bg-layer /> 钉在视口上画，
+     这样长页面滚动时不会因为背景盒高度变化而露出分层硬边 */
+  background-color: #F4FAF8;
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-size: 30rpx;
+  line-height: 1.7;
+}
+
+view, text {
+  box-sizing: border-box;
+}
+
+/* 数字用衬线：从「仪表盘」变成「病历本」 */
+.num {
+  font-family: Georgia, "Songti SC", "Times New Roman", serif;
+  font-feature-settings: "lnum";
+}
+
+.page {
+  position: relative;
+  z-index: 1; /* 压在 bg-layer 之上 */
+  padding: 24rpx 32rpx 64rpx;
+}
+
+/* tab 页：内容滚到底前先淡出到 tabBar 同色，接缝处看不到硬边 */
+.page.tab-page {
+  padding-bottom: 64rpx;
+}
+
+/* 底部渐隐罩：把内容化进 tabBar 的底色里，原生 tabBar 也就没有"起跑线"了 */
+.tab-fade {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  height: calc(196rpx + env(safe-area-inset-bottom));
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(246, 251, 249, 0) 0%,
+    rgba(246, 251, 249, 0.55) 34%,
+    rgba(246, 251, 249, 0.92) 62%,
+    #F6FBF9 100%
+  );
+}
+
+/* ---------- 文本层级 ---------- */
+.h1 {
+  font-size: 44rpx;
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+
+.h2 {
+  font-size: 34rpx;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.body {
+  font-size: 30rpx;
+  color: var(--ink);
+}
+
+.muted {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+.tiny {
+  font-size: 24rpx;
+  color: var(--ink-3);
+  line-height: 1.65;
+}
+
+/* ---------- 容器：不做卡片，用留白与细线分组 ---------- */
+.card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 0 30rpx;
+  margin-bottom: 36rpx;
+  box-shadow: none;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+.card:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.card-flat {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 0 24rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+.card-sunk {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 24rpx 0 0;
+  border-top: 1rpx solid var(--line-soft);
+}
+
+/* 玻璃：全站只给首页锚点与登录面板两处 */
+.glass {
+  background: #F9FBF8;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6rpx 22rpx rgba(30, 47, 41, 0.04);
+}
+
+.section {
+  margin: 62rpx 0 20rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: var(--line-soft);
+  margin: 24rpx 0;
+}
+
+/* ---------- 主任务：不套卡，只靠字号与字距立住 ---------- */
+.primary-task {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 0 6rpx;
+  box-shadow: none;
+}
+
+.primary-task-label {
+  font-size: 21rpx;
+  color: var(--ink-3);
+  letter-spacing: 4rpx;
+  margin-bottom: 16rpx;
+}
+
+.primary-task-title {
+  font-size: 42rpx;
+  font-weight: 500;
+  line-height: 1.42;
+  letter-spacing: 0.5rpx;
+  color: var(--ink);
+}
+
+/* ---------- 按钮 ---------- */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92rpx;
+  background: var(--moss);
+  color: #F3F7F4;
+  font-size: 30rpx;
+  font-weight: 400;
+  border-radius: 18rpx;
+  letter-spacing: 1rpx;
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.18);
+  transition: transform 200ms cubic-bezier(0.32, 0.72, 0, 1), background 200ms;
+}
+
+.btn-primary.is-active {
+  background: var(--moss-press);
+  transform: scale(0.98);
+}
+
+.btn-primary.is-disabled {
+  background: var(--sage);
+  color: #F3F7F4;
+}
+
+.btn-ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: rgba(255, 255, 255, 0.38);
+  border: 1rpx solid rgba(255, 255, 255, 0.7);
+  color: var(--ink-2);
+  font-size: 29rpx;
+  border-radius: 18rpx;
+  box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.7);
+  transition: background 200ms;
+}
+
+.btn-ghost.is-active {
+  background: var(--sage-bg);
+}
+
+.btn-text {
+  color: var(--moss);
+  font-size: 28rpx;
+}
+
+/* ---------- 选项 ---------- */
+/* ---------- 选项：一行一条，靠细线分开，不用卡片 ---------- */
+.option {
+  background: transparent;
+  border: none;
+  border-bottom: 1rpx solid var(--line-soft);
+  border-left: 3rpx solid transparent;
+  border-radius: 0;
+  padding: 26rpx 20rpx 26rpx 28rpx;
+  margin-bottom: 0;
+  font-size: 29rpx;
+  color: var(--ink);
+  line-height: 1.55;
+  transition: background 200ms, color 200ms, border-color 200ms;
+}
+
+/* 选中：整行淡苔绿 + 左侧竖线 + 文字转绿，扫一眼就能数出选了哪些 */
+.option.is-selected {
+  background: rgba(56, 97, 79, 0.085);
+  border: none;
+  border-bottom: 1rpx solid transparent;
+  border-left: 3rpx solid var(--moss);
+  color: var(--moss);
+  font-weight: 500;
+}
+
+.option:active {
+  background: rgba(56, 97, 79, 0.05);
+}
+
+.option-sub {
+  font-size: 24rpx;
+  color: var(--ink-2);
+  margin-top: 6rpx;
+}
+
+/* ---------- 提示：一条细竖线 + 灰字，像病历页边的批注 ---------- */
+.note-info,
+.note-caution {
+  background: transparent;
+  border: none;
+  border-left: 2rpx solid var(--sage);
+  border-radius: 0;
+  padding: 2rpx 0 2rpx 22rpx;
+  color: var(--ink-2);
+  font-size: 26rpx;
+  line-height: 1.8;
+}
+
+.note-danger {
+  background: transparent;
+  border: none;
+  border-left: 2rpx solid var(--alert);
+  border-radius: 0;
+  padding: 2rpx 0 2rpx 22rpx;
+  color: #7A4238;
+  font-size: 26rpx;
+  line-height: 1.8;
+}
+
+/* 提示的首句：靠字重分层，不靠颜色和色条 */
+.note-lead {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6rpx;
+}
+
+/* ---------- 标签：不用胶囊，用字距 + 细下划线 ---------- */
+.tag {
+  display: inline-block;
+  padding: 0 2rpx 2rpx;
+  border-radius: 0;
+  border-bottom: 1rpx solid var(--sage);
+  font-size: 22rpx;
+  letter-spacing: 1.5rpx;
+  background: transparent;
+  color: var(--moss);
+}
+
+.tag-research {
+  display: inline-block;
+  padding: 0 2rpx 2rpx;
+  border-radius: 0;
+  border-bottom: 1rpx solid #B7C8CF;
+  font-size: 22rpx;
+  letter-spacing: 1.5rpx;
+  background: transparent;
+  color: var(--note);
+}
+
+.tag-pending {
+  display: inline-block;
+  padding: 0 2rpx 2rpx;
+  border-radius: 0;
+  border-bottom: 1rpx dashed var(--line);
+  font-size: 22rpx;
+  letter-spacing: 1.5rpx;
+  background: transparent;
+  color: var(--ink-3);
+}
+
+/* ---------- 行 ---------- */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.row-gap {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+/* ---------- 进度 ---------- */
+.progress-track {
+  height: 6rpx;
+  background: var(--paper-2);
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 6rpx;
+  background: var(--moss);
+  border-radius: 4rpx;
+  transition: width 220ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* ---------- 空状态 ---------- */
+.empty {
+  padding: 72rpx 24rpx;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 28rpx;
+  line-height: 1.7;
+}
+
+/* ==========================================================
+   悬浮层级：static 4 → float 12 → glass 16（阴影只分三档）
+   按下时同时降阴影 + 微缩，制造「按下去」而非「变色」
+   ========================================================== */
+.card {
+  position: relative;
+  transition: transform 220ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 220ms;
+}
+
+.card-lift {
+  box-shadow: none;
+}
+
+/* 可点击区域按下时只变淡，不做缩放与阴影抖动 */
+.pressed {
+  opacity: 0.62;
+  transform: none;
+}
+
+/* 轻量按压：列表行、可展开块用这个，比 pressed 更淡 */
+.tap-dim {
+  opacity: 0.5;
+}
+
+/* 按压时的文字与箭头同步内收 */
+.pressed .entry-arrow,
+.pressed .task-cta {
+  transform: translateX(4rpx);
+}
+
+/* ---------- 动效：只做进入、呼吸、保存回落 ---------- */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+
+.breathe {
+  animation: breathe 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes halo {
+  0%, 100% { opacity: 0.35; transform: scale(0.96); }
+  50% { opacity: 0.7; transform: scale(1.08); }
+}
+
+.halo {
+  animation: halo 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rise {
+  animation: rise 220ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* 入场错峰：不要让所有块同时出现 */
+.rise-1 { animation-delay: 40ms; }
+.rise-2 { animation-delay: 90ms; }
+.rise-3 { animation-delay: 140ms; }
+.rise-4 { animation-delay: 190ms; }
+
+/* 保存成功的回落：数字轻弹一下，不放大五彩 */
+@keyframes settle {
+  0% { transform: scale(1.08); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.settle {
+  animation: settle 320ms cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+/* ---------- 安全区 ---------- */
+.safe-bottom {
+  height: 40rpx;
+}

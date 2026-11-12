@@ -1,0 +1,128 @@
+.chat-page {
+  position: relative;
+  z-index: 1; /* 压在 bg-layer 之上 */
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 0 32rpx;
+}
+
+.chat-head {
+  flex: 0 0 auto;
+  padding-top: 8rpx;
+}
+
+.intro {
+  margin: 16rpx 0 24rpx;
+}
+
+.thread {
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.empty-thread {
+  padding: 40rpx 0;
+  text-align: center;
+}
+
+.bubble {
+  border-radius: 18rpx;
+  padding: 24rpx 26rpx;
+  margin-bottom: 20rpx;
+  font-size: 29rpx;
+  line-height: 1.75;
+}
+
+.bubble.user {
+  background: var(--sage-bg);
+  color: var(--ink);
+  border-bottom-right-radius: 6rpx;
+}
+
+.bubble.anxin {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--ink);
+  border-bottom-left-radius: 6rpx;
+}
+
+.para {
+  margin-bottom: 14rpx;
+}
+
+.sources {
+  font-size: 22rpx;
+  color: var(--ink-3);
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.boundary {
+  font-size: 22rpx;
+  color: var(--ink-3);
+  background: var(--surface-sunk);
+  border-radius: 8rpx;
+  padding: 10rpx 14rpx;
+  margin-top: 12rpx;
+  line-height: 1.6;
+}
+
+.acts {
+  margin-top: 16rpx;
+}
+
+.act {
+  display: inline-block;
+  font-size: 26rpx;
+  color: var(--moss);
+  margin-right: 24rpx;
+}
+
+.suggest {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  padding: 14rpx 0 4rpx;
+}
+
+.suggest-chip {
+  padding: 12rpx 20rpx;
+  background: #FFFFFF;
+  border: 1rpx solid var(--line);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #4B705F;
+}
+
+.composer {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 0 calc(20rpx + env(safe-area-inset-bottom));
+}
+
+.composer-input {
+  flex: 1;
+  height: 84rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 42rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+}
+
+.composer-send {
+  width: 140rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  background: var(--moss);
+  color: #F3F7F4;
+  border-radius: 42rpx;
+  font-size: 28rpx;
+}

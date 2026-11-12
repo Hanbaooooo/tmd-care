@@ -1,0 +1,199 @@
+<bg-layer />
+<view class="page tab-page">
+  <nav-bar />
+  <view class="head rise">
+    <view class="head-date num">{{dateLine}}</view>
+    <view class="h1 head-title">{{greeting}}</view>
+  </view>
+
+  <!-- 未同步提示：不阻断，只说明 -->
+  <view wx:if="{{pendingSync}}" class="sync-bar rise-1" bindtap="goLogin" hover-class="pressed">
+    <text>有内容尚未同步</text>
+    <text class="sync-act">登录后补传 ›</text>
+  </view>
+
+  <!-- 评估：常驻两行，置顶 -->
+  <view class="eval-group rise-1">
+    <view class="eval-head">
+      <text class="eval-label">评估</text>
+      <text class="eval-hint">{{needsScreen ? '还没做过，先做临床筛查' : '随时可以做'}}</text>
+    </view>
+
+    <view
+      class="entry-line is-key"
+      bindtap="goScreen"
+      hover-class="tap-dim"
+      hover-stay-time="80"
+    >
+      <view class="entry-main">
+        <view class="entry-title">临床筛查</view>
+      </view>
+      <text class="entry-arrow">›</text>
+    </view>
+
+    <view
+      class="entry-line"
+      bindtap="goPsych"
+      hover-class="tap-dim"
+      hover-stay-time="80"
+    >
+      <view class="entry-main">
+        <view class="entry-title">心理与行为评估</view>
+      </view>
+      <text class="entry-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 今日锚点：不套容器，只有一个细圆与数字 -->
+  <view class="anchor rise-2">
+    <view class="anchor-head">
+      <text class="anchor-label">今天的疼痛</text>
+      <text wx:if="{{anchor.done}}" class="anchor-state">已记录</text>
+    </view>
+
+    <view class="stage" bindtap="toggleAnchor" hover-class="stage-press" hover-stay-time="80">
+      <view class="ring breathe"></view>
+      <view class="core">
+        <text class="core-num num {{justSaved ? 'settle' : ''}}">{{anchor.display}}</text>
+        <text wx:if="{{anchor.nrs !== null}}" class="core-unit">/ 10</text>
+      </view>
+    </view>
+
+    <view class="anchor-tail">{{anchor.tail}}</view>
+
+    <block wx:if="{{anchor.open}}">
+      <view class="divider"></view>
+      <view class="ask">现在疼几分</view>
+      <view class="nrs-row">
+        <view
+          class="nrs-cell {{anchor.nrs === item ? 'on' : ''}}"
+          wx:for="{{scale}}"
+          wx:key="*this"
+          bindtap="pickNrs"
+          data-value="{{item}}"
+        >
+          {{item}}
+        </view>
+      </view>
+      <view wx:if="{{anchor.levelText}}" class="tiny mt8">{{anchor.levelText}}</view>
+
+      <view class="ask mt20">今天注意到自己咬紧过吗</view>
+      <view class="clench-row">
+        <view class="clench {{anchor.clench === true ? 'on' : ''}}" bindtap="pickClench" data-value="yes">注意到了</view>
+        <view class="clench {{anchor.clench === false ? 'on' : ''}}" bindtap="pickClench" data-value="no">没有</view>
+      </view>
+
+      <view
+        class="btn-primary mt24 {{anchor.saving ? 'is-disabled' : ''}}"
+        bindtap="saveAnchor"
+        hover-class="{{anchor.saving ? '' : 'is-active'}}"
+        hover-stay-time="80"
+      >
+        {{anchor.saving ? '保存中…' : '记下来'}}
+      </view>
+      <view wx:if="{{anchor.pending}}" class="tiny mt12">存在手机里了，联网会自动补传。</view>
+    </block>
+  </view>
+
+  <!-- 每周复查：本周没做就强调，做了只留状态 -->
+  <view
+    wx:if="{{screenDigest}}"
+    class="week-card {{screenWeek.due ? 'is-due' : ''}} rise-2"
+    bindtap="onWeekCard"
+    hover-class="pressed"
+  >
+    <view class="week-top">
+      <text class="week-label">每周复查</text>
+      <text class="week-state {{screenWeek.due ? 'due' : ''}}">{{screenWeek.text}}</text>
+    </view>
+    <view wx:if="{{screenWeek.due}}" class="week-title">两分钟，看这周有没有变化</view>
+    <view wx:else class="week-title">
+      <text>{{screenDigest.label}}</text>
+      <text class="week-dot">·</text>
+      <text>{{screenDigest.dominant}}</text>
+    </view>
+    <view class="week-foot">
+      <text class="week-note">{{screenDigest.care}}</text>
+      <text class="week-go">{{screenWeek.due ? '去复查' : '看结果'}} ›</text>
+    </view>
+  </view>
+
+  <!-- 周提醒 -->
+  <view wx:if="{{screenDigest}}" class="remind-row rise-2">
+    <view class="remind-text">
+      <view class="remind-title">每周提醒</view>
+      <view class="tiny">到下周还没做，打开就会看到提醒</view>
+    </view>
+    <switch checked="{{weeklyRemind}}" bindchange="onWeeklyRemind" color="#38614F" />
+  </view>
+
+  <!-- 课程只留一行位置：内容在六周计划页里，首页不再重复一遍标题 -->
+  <view wx:if="{{planState.text}}" class="plan-line rise-2" bindtap="goPlan" hover-class="tap-dim" hover-stay-time="80">
+    <text class="plan-line-label">六周计划</text>
+    <text class="plan-line-state">{{planState.text}}</text>
+    <text class="entry-arrow">›</text>
+  </view>
+
+
+  <!-- 最近一次记录 -->
+  <view class="section rise-3">
+    <view class="row">
+      <text class="h2 small">最近一次记录</text>
+      <text class="btn-text" bindtap="goRecords">全部记录</text>
+    </view>
+
+    <view wx:if="{{lastRecord}}" class="card-flat record-row">
+      <view class="row">
+        <text class="record-date">{{lastRecord.date}}</text>
+        <text class="record-nrs num {{lastRecord.tone}}">{{lastRecord.nrs}} / 10</text>
+      </view>
+      <view class="tiny mt6">{{lastRecord.level}} · {{lastRecord.extra}}</view>
+    </view>
+
+    <view wx:else class="card-flat record-row">
+      <view class="muted">还没有记录。</view>
+      <view class="tiny mt6">记一次，以后才有得比。</view>
+    </view>
+  </view>
+
+  <!-- 就诊提示 -->
+  <view class="note-{{careHint.tone}} mt24 rise-3">{{careHint.text}}</view>
+
+  <!-- 两个快捷动作：课程已在上方一行，这里不重复 -->
+  <view class="section rise-4">
+    <view class="h2 small">现在可以做</view>
+    <view class="quick-grid">
+      <view class="quick" bindtap="goRecordEdit" hover-class="pressed">
+        <view class="quick-title">记一次症状</view>
+        <view class="tiny">约 30 秒</view>
+      </view>
+      <view class="quick" bindtap="goTriage" hover-class="pressed">
+        <view class="quick-title">准备就诊</view>
+        <view class="tiny">整理症状</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 安心，文字入口，不占导航 -->
+  <view class="entry-line rise-4" bindtap="goAnxin" hover-class="pressed">
+    <view>
+      <view class="entry-title">安心</view>
+      <view class="tiny">问一个关于症状或课程的问题</view>
+    </view>
+    <text class="entry-arrow">›</text>
+  </view>
+
+  <!-- 研究任务入口：仅单独同意后出现，不抢主任务位 -->
+  <view wx:if="{{hasResearch}}" class="entry-line" bindtap="goResearch" hover-class="pressed">
+    <view>
+      <view class="entry-title">我的研究任务 <text class="tag-research">研究</text></view>
+      <view class="tiny">{{researchHint}}</view>
+    </view>
+    <text class="entry-arrow">›</text>
+  </view>
+
+  <view class="tiny foot">
+    这里只做自我管理，不能看病。脸肿起来、外伤后更疼、张嘴合不上，直接去医院。
+  </view>
+  <view class="tab-fade"></view>
+</view>

@@ -1,0 +1,19 @@
+<!-- 占位：把页面内容推到状态栏与导航条之下 -->
+<view class="nav-holder" style="height: {{holder}}px"></view>
+
+<!-- 磨砂玻璃条：内容从它下面透过去，底部渐隐，没有硬边 -->
+<view class="nav-glass" style="height: {{holder}}px"></view>
+
+<!-- 返回键单独一层，不参与遮罩，避免被淡掉 -->
+<view
+  wx:if="{{showBack}}"
+  class="nav-back"
+  style="top: {{statusH}}px"
+  bindtap="onBack"
+  hover-class="nav-back-on"
+  hover-stay-time="80"
+>
+  <text class="nav-arrow">‹</text>
+</view>
+
+<view wx:if="{{title}}" class="nav-title" style="top: {{statusH}}px">{{title}}</view>

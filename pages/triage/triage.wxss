@@ -1,0 +1,82 @@
+.intro {
+  margin: 16rpx 0 32rpx;
+}
+
+.hint {
+  margin: 8rpx 0 28rpx;
+}
+
+.mt {
+  margin-top: 32rpx;
+}
+
+.mt8 {
+  margin-top: 8rpx;
+}
+
+.mt16 {
+  margin-top: 16rpx;
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+.mb {
+  margin-bottom: 32rpx;
+}
+
+.progress-row {
+  margin-top: 8rpx;
+}
+
+.scale-value {
+  font-size: 96rpx;
+  font-weight: 600;
+  color: var(--moss);
+  text-align: center;
+  line-height: 1.2;
+  margin: 24rpx 0 8rpx;
+}
+
+.scale-ends {
+  display: flex;
+  justify-content: space-between;
+  margin: 8rpx 0 32rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.result-head {
+  padding: 32rpx 0 8rpx;
+}
+
+.result-head .tiny {
+  color: var(--moss);
+  letter-spacing: 2rpx;
+}
+
+.result-head.urgent .tiny {
+  color: var(--alert);
+}
+
+.small {
+  font-size: 30rpx;
+  margin-bottom: 16rpx;
+}
+
+.reason,
+.action {
+  font-size: 28rpx;
+  color: var(--ink);
+  line-height: 1.7;
+  margin-bottom: 12rpx;
+}

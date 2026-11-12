@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/welcome/welcome",
+    "pages/home/home",
+    "pages/plan/plan",
+    "pages/records/records",
+    "pages/care/care",
+    "pages/screen/screen",
+    "pages/psych/psych",
+    "pages/profile/profile",
+    "pages/triage/triage",
+    "pages/summary/summary",
+    "pages/week/week",
+    "pages/record-edit/record-edit",
+    "pages/anxin/anxin",
+    "pages/research/research",
+    "pages/scale/scale",
+    "pages/login/login"
+  ],
+  "window": {
+    "navigationBarTitleText": "颞安智护",
+    "navigationBarBackgroundColor": "#FBFEFD",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F6FBF9",
+    "backgroundTextStyle": "dark",
+    "navigationStyle": "custom"
+  },
+  "tabBar": {
+    "color": "#84958C",
+    "selectedColor": "#38614F",
+    "backgroundColor": "#F6FBF9",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/plan/plan",
+        "text": "六周计划"
+      },
+      {
+        "pagePath": "pages/records/records",
+        "text": "我的记录"
+      },
+      {
+        "pagePath": "pages/care/care",
+        "text": "就诊与帮助"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "bg-layer": "/components/bg-layer/bg-layer"
+  }
+}

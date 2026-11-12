@@ -1,0 +1,129 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="rail">
+    <view class="rail-fill" style="width:{{percent}}%"></view>
+  </view>
+
+  <view wx:if="{{resumed}}" class="resume">
+    上次没做完，已从停下的地方继续。之前的选择都还在。
+  </view>
+
+  <view class="eyebrow">{{weekLabel}}</view>
+
+  <view wx:if="{{isFirst}}" class="intro-lede">
+    不用懂医学词，也不用自己量。按最近两周的真实感觉答就行。
+  </view>
+
+  <view class="step-head">
+    <text class="step-idx num">{{stepIndexText}}</text>
+    <view class="step-body">
+      <view class="step-title">{{stepView.title}}</view>
+      <view wx:if="{{stepView.hint}}" class="step-hint">{{stepView.hint}}</view>
+    </view>
+  </view>
+
+  <block wx:if="{{stepView.type === 'flags'}}">
+    <view
+      class="option flag {{item.checked ? 'is-selected' : ''}}"
+      wx:for="{{stepView.items}}"
+      wx:key="key"
+      bindtap="toggleFlag"
+      data-key="{{item.key}}"
+    >
+      <view class="check {{item.checked ? 'on' : ''}}">
+        <text wx:if="{{item.checked}}" class="check-mark">✓</text>
+      </view>
+      <view class="flag-text">{{item.label}}</view>
+    </view>
+
+    <view class="quiet" bindtap="clearFlags">以上都没有</view>
+
+    <view wx:if="{{stepView.count > 0}}" class="note-danger mt24">
+      你勾了 {{stepView.count}} 项。这些得让医生当面看，先别自己扛；做完会告诉你先找谁、急不急。
+    </view>
+
+    <view class="boundary mt24">
+      <view class="boundary-strong">你说感受，医生做检查</view>
+      <view class="boundary-text">不用自己摸下颌，也不用猜是不是关节盘移位。这里给的是线索，不是诊断。</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="q" id="sq-{{q.key}}" wx:for="{{stepView.questions}}" wx:key="key" wx:for-item="q">
+      <view class="q-head">
+        <text class="q-no num">{{q.no}}</text>
+        <view class="q-body">
+          <view class="q-title">{{q.title}}</view>
+          <view wx:if="{{q.hint}}" class="q-hint">{{q.hint}}</view>
+        </view>
+      </view>
+
+      <block wx:if="{{q.type === 'multi' || q.type === 'single'}}">
+        <view
+          class="option {{o.checked ? 'is-selected' : ''}}"
+          wx:for="{{q.options}}"
+          wx:key="value"
+          wx:for-item="o"
+          bindtap="pickOption"
+          data-q="{{q.key}}"
+          data-value="{{o.value}}"
+        >
+          {{o.label}}
+        </view>
+      </block>
+
+      <block wx:if="{{q.type === 'scale'}}">
+        <view class="scale-head">
+          <text class="scale-num num">{{q.valueText}}</text>
+          <text class="scale-level">{{q.levelText}}</text>
+        </view>
+        <view class="scale-row">
+          <view
+            class="scale-cell num {{v.active ? 'on' : ''}}"
+            wx:for="{{q.scale}}"
+            wx:key="value"
+            wx:for-item="v"
+            bindtap="pickScale"
+            data-q="{{q.key}}"
+            data-value="{{v.value}}"
+          >
+            {{v.value}}
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{q.type === 'grid'}}">
+        <view class="legend">{{q.legend}}</view>
+        <view class="grid-row" wx:for="{{q.rows}}" wx:key="index" wx:for-item="r">
+          <view class="grid-label">{{r.label}}</view>
+          <view class="grid-opts">
+            <view
+              class="grid-cell {{c.checked ? 'on' : ''}}"
+              wx:for="{{r.options}}"
+              wx:key="value"
+              wx:for-item="c"
+              bindtap="pickGrid"
+              data-q="{{q.key}}"
+              data-row="{{r.index}}"
+              data-value="{{c.value}}"
+            >
+              {{c.label}}
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="quiet-note">别为了试试还疼不疼反复张大嘴，越试越紧。</view>
+  </block>
+
+  <view class="foot-space"></view>
+
+  <view class="footer">
+    <view class="foot-btn back" bindtap="prev" hover-class="is-fade" hover-stay-time="80">{{stepIndex === 0 ? '退出' : '上一屏'}}</view>
+    <view class="btn-primary foot-btn grow {{canNext ? '' : 'is-disabled'}}" bindtap="next" hover-class="is-active" hover-stay-time="80">
+      {{percent === 100 ? '看结果' : '下一屏'}}
+    </view>
+  </view>
+</view>

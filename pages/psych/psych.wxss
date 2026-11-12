@@ -1,0 +1,362 @@
+/* 顶部进度 */
+.rail {
+  height: 3rpx;
+  margin: 0 -32rpx 30rpx;
+  background: var(--paper-2);
+}
+
+.rail-fill {
+  height: 3rpx;
+  background: var(--moss);
+  transition: width 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.eyebrow {
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  color: var(--ink-3);
+}
+
+/* 量表名 */
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  margin: 12rpx 0 18rpx;
+}
+
+.sec-name {
+  font-size: 40rpx;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+  color: var(--ink);
+}
+
+.sec-sub {
+  font-size: 23rpx;
+  color: var(--ink-3);
+}
+
+.sec-instruct {
+  font-size: 26rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.legend {
+  margin: 10rpx 0 30rpx;
+  padding-bottom: 18rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+  font-size: 21rpx;
+  letter-spacing: 0.5rpx;
+  color: var(--ink-3);
+}
+
+/* 题目 */
+.q {
+  padding: 20rpx 0 6rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+.q:last-of-type {
+  border-bottom: none;
+}
+
+/* 漏答被点出来时，只给一条竖线和一点底色，不做弹窗 */
+.q.is-miss {
+  margin: 0 -14rpx;
+  padding-left: 14rpx;
+  padding-right: 14rpx;
+  background: rgba(154, 112, 62, 0.06);
+  box-shadow: inset 3rpx 0 0 var(--note);
+}
+
+.q.is-miss .q-title {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.q-head {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 14rpx;
+}
+
+.q-no {
+  font-size: 21rpx;
+  color: var(--ink-3);
+  letter-spacing: 1rpx;
+  padding-top: 5rpx;
+  flex: 0 0 auto;
+}
+
+.q-title {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* 选项：一排细格，选中整格变色 */
+.opts {
+  display: flex;
+  gap: 8rpx;
+  padding-bottom: 20rpx;
+}
+
+.opt {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 14rpx 4rpx;
+  border: 1rpx solid var(--line);
+  border-radius: 10rpx;
+  text-align: center;
+  font-size: 21rpx;
+  line-height: 1.3;
+  color: var(--ink-2);
+  transition: background 180ms, color 180ms, border-color 180ms;
+}
+
+.opt.on {
+  background: rgba(56, 97, 79, 0.14);
+  border-color: var(--moss);
+  color: var(--moss);
+  font-weight: 500;
+}
+
+.opt-press {
+  background: rgba(56, 97, 79, 0.05);
+}
+
+.opts.opt11 .opt {
+  padding: 14rpx 0;
+  font-size: 22rpx;
+}
+
+.opts.opt5 .opt {
+  font-size: 20rpx;
+  letter-spacing: 0;
+}
+
+/* 四列：中文标签较长（一半以上的时间），统一成等高、居中、可折两行 */
+.opts.opt4 .opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92rpx;
+  padding: 12rpx 2rpx;
+  font-size: 20rpx;
+}
+
+/* 底部 */
+.foot-space {
+  height: 190rpx;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  gap: 14rpx;
+  padding: 20rpx 32rpx calc(22rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    180deg,
+    rgba(238, 245, 241, 0) 0%,
+    rgba(238, 245, 241, 0.82) 42%,
+    rgba(236, 244, 240, 0.96) 100%
+  );
+}
+
+.foot-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.foot-btn.back {
+  flex: 0 0 auto;
+  min-width: 140rpx;
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.foot-btn.grow {
+  flex: 1 1 auto;
+}
+
+.is-fade {
+  opacity: 0.55;
+}
+
+/* ---------- 结果 ---------- */
+.result-lede {
+  margin: 14rpx 0 34rpx;
+  font-size: 26rpx;
+  line-height: 1.75;
+}
+
+.score {
+  padding: 26rpx 0 24rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+.score-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.score-label {
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.score-num {
+  font-size: 34rpx;
+  color: var(--ink);
+}
+
+.score-max {
+  font-size: 21rpx;
+  color: var(--ink-3);
+}
+
+.bar {
+  height: 3rpx;
+  margin: 16rpx 0 14rpx;
+  background: var(--line-soft);
+}
+
+.bar-fill {
+  height: 3rpx;
+  transition: width 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.bar-fill.moss {
+  background: var(--moss-soft);
+}
+
+.bar-fill.note {
+  background: var(--note);
+}
+
+.bar-fill.alert {
+  background: var(--alert);
+}
+
+.score-band {
+  font-size: 23rpx;
+  letter-spacing: 2rpx;
+}
+
+.score-band.moss {
+  color: var(--moss);
+}
+
+.score-band.note {
+  color: var(--note);
+}
+
+.score-band.alert {
+  color: var(--alert);
+}
+
+.score-text {
+  margin-top: 8rpx;
+  font-size: 25rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.note-line {
+  font-size: 25rpx;
+  line-height: 1.8;
+}
+
+.boundary {
+  padding-left: 22rpx;
+  border-left: 2rpx solid var(--sage);
+}
+
+.boundary-strong {
+  font-size: 25rpx;
+  color: var(--ink);
+  margin-bottom: 6rpx;
+}
+
+.boundary-text {
+  font-size: 23rpx;
+  line-height: 1.8;
+  color: var(--ink-3);
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+/* ---------- 结论与画像 ---------- */
+.portrait {
+  margin-top: 36rpx;
+  padding-top: 28rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.portrait-eyebrow {
+  font-size: 21rpx;
+  letter-spacing: 4rpx;
+  color: var(--ink-3);
+}
+
+.portrait-conclusion {
+  margin-top: 14rpx;
+  font-size: 25rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.portrait-title {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  line-height: 1.42;
+  letter-spacing: 1rpx;
+  color: var(--ink);
+}
+
+.portrait-text {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  line-height: 1.86;
+  color: var(--ink-2);
+}
+
+.portrait-act {
+  margin-top: 24rpx;
+  padding-left: 20rpx;
+  border-left: 2rpx solid var(--sage);
+}
+
+.portrait.alert .portrait-act {
+  border-left-color: var(--alert);
+}
+
+.portrait.note .portrait-act {
+  border-left-color: var(--note);
+}
+
+.portrait-act-k {
+  display: block;
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  color: var(--ink-3);
+  margin-bottom: 6rpx;
+}
+
+.portrait-act-v {
+  display: block;
+  font-size: 25rpx;
+  line-height: 1.8;
+  color: var(--ink);
+}

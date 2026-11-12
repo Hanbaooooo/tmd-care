@@ -1,0 +1,105 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="tiny">{{visitLabel}} · 研究任务</view>
+  <view class="h1 mt8">{{scale.name}}</view>
+  <view class="muted intro">{{scale.instruction}}</view>
+
+  <view wx:if="{{scale.caveat}}" class="note-caution mb">{{scale.caveat}}</view>
+
+  <!-- 逐题，四级或五级 -->
+  <view wx:if="{{mode === 'likert'}}">
+    <view
+      wx:for="{{questions}}"
+      wx:for-index="qi"
+      wx:key="idx"
+      id="q-{{qi}}"
+      class="q-block {{missIdx === qi ? 'is-miss' : ''}}"
+    >
+      <view class="q-title">{{qi + 1}}. {{item.text}}</view>
+      <view wx:if="{{item.hint}}" class="q-hint">{{item.hint}}</view>
+      <view
+        wx:for="{{item.options}}"
+        wx:for-item="opt"
+        wx:for-index="oi"
+        wx:key="value"
+        class="option {{opt.checked ? 'is-selected' : ''}}"
+        bindtap="pickOption"
+        data-q="{{qi}}"
+        data-value="{{opt.value}}"
+      >
+        {{opt.label}}
+      </view>
+    </view>
+
+    <view wx:if="{{hasExtra}}" class="q-block">
+      <view class="q-title">{{scale.extra.question}}</view>
+      <view
+        wx:for="{{extraOptions}}"
+        wx:key="value"
+        class="option {{item.checked ? 'is-selected' : ''}}"
+        bindtap="pickExtra"
+        data-value="{{item.value}}"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 单一 0–10 -->
+  <view wx:if="{{mode === 'nrs'}}">
+    <view class="big-value">{{nrsValue}}</view>
+    <slider min="0" max="10" step="1" value="{{nrsValue}}" activeColor="#38614F" backgroundColor="#E6EFEC" block-size="24" bindchange="onNrs" />
+    <view class="scale-ends">
+      <text class="tiny">0 无痛</text>
+      <text class="tiny">10 最剧烈</text>
+    </view>
+  </view>
+
+  <!-- 多项 0–10 -->
+  <view wx:if="{{mode === 'grid'}}">
+    <view wx:for="{{gridItems}}" wx:key="idx" class="q-block">
+      <view class="row">
+        <text class="q-title flex1">{{index + 1}}. {{item.text}}</text>
+        <text class="grid-value">{{item.value}}</text>
+      </view>
+      <slider min="0" max="10" step="1" value="{{item.value}}" activeColor="#38614F" backgroundColor="#E6EFEC" block-size="20" data-index="{{index}}" bindchange="onGrid" />
+    </view>
+  </view>
+
+  <!-- 结构化 -->
+  <view wx:if="{{mode === 'structured'}}">
+    <view wx:for="{{groups}}" wx:for-index="gi" wx:key="key" class="q-block">
+      <view class="q-title">{{item.question}}</view>
+      <view
+        wx:for="{{item.options}}"
+        wx:for-item="opt"
+        wx:for-index="oi"
+        wx:key="value"
+        class="option {{opt.checked ? 'is-selected' : ''}}"
+        bindtap="pickGroup"
+        data-g="{{gi}}"
+        data-value="{{opt.value}}"
+      >
+        {{opt.label}}
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{scoreText}}" class="card mt24">
+    <view class="row">
+      <text class="h2 small">本次得分</text>
+      <text class="score">{{scoreText}}</text>
+    </view>
+    <view wx:if="{{bandText}}" class="tiny mt8">{{bandText}}</view>
+    <view class="tiny mt8">{{scoreNote}}</view>
+  </view>
+
+  <view wx:if="{{errorMsg}}" class="note-caution mt24">{{errorMsg}}</view>
+
+  <view class="btn-primary mt24 {{saving ? 'is-disabled' : ''}}" bindtap="save" hover-class="is-active" hover-stay-time="80">
+    {{saving ? '正在保存…' : '提交'}}
+  </view>
+
+  <view class="tiny mt16">{{scale.source}}</view>
+</view>

@@ -1,0 +1,170 @@
+/* ---------- 头部 ---------- */
+.head {
+  padding: 20rpx 0 36rpx;
+}
+
+.lede {
+  margin-top: 14rpx;
+  font-size: 26rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+  letter-spacing: 0.3rpx;
+}
+
+/* ---------- 主任务 ---------- */
+.pt-body {
+  margin-top: 16rpx;
+  font-size: 27rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.pt-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 30rpx;
+  padding-top: 22rpx;
+  border-top: 1rpx dashed var(--line);
+}
+
+.pt-time {
+  font-size: 22rpx;
+  color: var(--ink-3);
+  letter-spacing: 2rpx;
+}
+
+.pt-go {
+  font-size: 27rpx;
+  color: var(--moss);
+  letter-spacing: 1rpx;
+}
+
+/* ---------- 就医分组 ---------- */
+.small {
+  font-size: 30rpx;
+  margin-bottom: 18rpx;
+}
+
+.group {
+  background: transparent;
+  border-radius: 0;
+  padding: 0 0 22rpx;
+  margin-bottom: 30rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+.group:last-of-type {
+  border-bottom: none;
+}
+
+.group-head {
+  margin-bottom: 14rpx;
+}
+
+.group-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  letter-spacing: 0;
+  margin-bottom: 6rpx;
+  color: var(--ink);
+}
+
+.group-title.emergency {
+  color: var(--alert);
+}
+
+.group-title.clinic {
+  color: var(--ink);
+}
+
+.group-hint {
+  display: block;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+/* 列表去掉了圆点：细竖标记 + 行间虚线，读起来像病历而不是清单 */
+.li {
+  display: flex;
+  align-items: flex-start;
+  padding: 13rpx 0;
+  border-bottom: 1rpx dashed var(--line-soft);
+}
+
+.li:last-child {
+  border-bottom: none;
+  padding-bottom: 2rpx;
+}
+
+.li-dot {
+  width: 3rpx;
+  height: 26rpx;
+  border-radius: 2rpx;
+  margin-top: 13rpx;
+  margin-right: 20rpx;
+  flex: 0 0 auto;
+}
+
+.li-dot.emergency {
+  background: rgba(150, 86, 74, 0.42);
+}
+
+.li-dot.clinic {
+  background: rgba(30, 47, 41, 0.18);
+}
+
+.li-text {
+  flex: 1;
+  font-size: 27rpx;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+/* ---------- 列表入口 ---------- */
+.entry-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 26rpx 0;
+  margin-bottom: 0;
+  border-bottom: 1rpx solid var(--line-soft);
+  transition: opacity 200ms;
+}
+
+.entry-title {
+  font-size: 29rpx;
+  color: var(--ink);
+  margin-bottom: 6rpx;
+}
+
+.entry-arrow {
+  font-size: 30rpx;
+  color: var(--ink-3);
+  margin-left: 20rpx;
+}
+
+/* ---------- 数据说明 ---------- */
+.para {
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: var(--ink-2);
+  margin-bottom: 14rpx;
+}
+
+.para.last {
+  margin-bottom: 4rpx;
+}
+
+.mt16 {
+  margin-top: 16rpx;
+}
+
+.mt20 {
+  margin-top: 20rpx;
+}

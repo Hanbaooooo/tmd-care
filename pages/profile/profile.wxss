@@ -1,0 +1,182 @@
+.sync {
+  margin-top: 12rpx;
+}
+
+.mt8 { margin-top: 8rpx; }
+.mt16 { margin-top: 16rpx; }
+.mt20 { margin-top: 20rpx; }
+.mt24 { margin-top: 24rpx; }
+
+.center {
+  text-align: center;
+}
+
+.conclusion {
+  font-size: 34rpx;
+  line-height: 1.62;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+  margin-top: 20rpx;
+}
+
+.care-head {
+  font-size: 29rpx;
+  font-weight: 500;
+  color: var(--moss);
+}
+
+.axis-label {
+  font-size: 21rpx;
+  letter-spacing: 5rpx;
+  color: var(--moss);
+  margin-bottom: 8rpx;
+}
+
+.h2.small {
+  font-size: 29rpx;
+  margin-bottom: 12rpx;
+}
+
+.group-title {
+  font-size: 31rpx;
+  font-weight: 500;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.para {
+  font-size: 27rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-top: 8rpx;
+}
+
+/* 双栏：不用两个色块，用一条虚线中缝 */
+.two-col {
+  display: flex;
+  margin-top: 18rpx;
+}
+
+.col {
+  flex: 1;
+  padding-right: 22rpx;
+}
+
+.col + .col {
+  padding-right: 0;
+  padding-left: 22rpx;
+  border-left: 1rpx dashed var(--line);
+}
+
+.col-head {
+  font-size: 23rpx;
+  font-weight: 500;
+  letter-spacing: 2rpx;
+  margin-bottom: 10rpx;
+}
+
+.col-head.support {
+  color: var(--moss);
+}
+
+.col-head.unknown {
+  color: var(--note);
+}
+
+.col-item {
+  font-size: 25rpx;
+  line-height: 1.65;
+  color: var(--ink-2);
+  margin-bottom: 6rpx;
+}
+
+/* ---------- Axis II 画像 ---------- */
+.summary {
+  font-size: 29rpx;
+  line-height: 1.75;
+  color: var(--ink);
+  margin-bottom: 30rpx;
+}
+
+.dim {
+  margin-bottom: 28rpx;
+}
+
+.dim-label {
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.dim-value {
+  font-size: 23rpx;
+  letter-spacing: 1rpx;
+}
+
+.dim-value.low {
+  color: var(--ink-3);
+}
+
+.dim-value.mid {
+  color: var(--note);
+}
+
+.dim-value.high {
+  color: var(--moss);
+}
+
+.dim-track {
+  height: 4rpx;
+  background: var(--paper-2);
+  border-radius: 2rpx;
+  overflow: hidden;
+  margin: 12rpx 0 8rpx;
+}
+
+.dim-fill {
+  height: 4rpx;
+  border-radius: 2rpx;
+  background: var(--sage);
+  transition: width 320ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.dim-fill.mid {
+  background: var(--moss-soft);
+}
+
+.dim-fill.high {
+  background: var(--moss);
+}
+
+.dim-text {
+  line-height: 1.65;
+}
+
+.note-line {
+  margin-bottom: 8rpx;
+}
+
+/* ---------- 起点 ---------- */
+.plan-line {
+  display: flex;
+  gap: 22rpx;
+  margin-bottom: 20rpx;
+}
+
+.plan-k {
+  flex: 0 0 auto;
+  width: 62rpx;
+  font-size: 23rpx;
+  color: var(--ink-3);
+  letter-spacing: 2rpx;
+  padding-top: 6rpx;
+}
+
+.plan-v {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.65;
+}
+
+.bound-line {
+  margin-bottom: 8rpx;
+}

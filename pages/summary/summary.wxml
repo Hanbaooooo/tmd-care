@@ -1,0 +1,63 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="h1">就诊摘要</view>
+  <view class="muted intro">下面全是你自己填的。我没加推测，也没写诊断。</view>
+
+  <view wx:if="{{!synced}}" class="note-caution mb">
+    还没同步到账户。这份只在这一页，换了手机就没了。登录后再生成一次，就会存下来。
+  </view>
+
+  <view wx:if="{{summary}}">
+    <view class="card">
+      <view class="row item">
+        <text class="label">不适位置</text>
+        <text class="value">{{siteText}}</text>
+      </view>
+      <view class="row item">
+        <text class="label">持续时间</text>
+        <text class="value">{{summary.duration || '未填写'}}</text>
+      </view>
+      <view class="row item">
+        <text class="label">加重情况</text>
+        <text class="value">{{triggerText}}</text>
+      </view>
+      <view class="row item">
+        <text class="label">关节声音</text>
+        <text class="value">{{summary.noise || '未填写'}}</text>
+      </view>
+      <view class="row item">
+        <text class="label">张口情况</text>
+        <text class="value">{{summary.opening || '未填写'}}</text>
+      </view>
+      <view class="row item">
+        <text class="label">生活影响</text>
+        <text class="value">{{burdenText}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{flagText}}" class="card">
+      <view class="h2 small">需要医生注意的情况</view>
+      <view class="flag">{{flagText}}</view>
+    </view>
+
+    <view class="card">
+      <view class="h2 small">建议下一步</view>
+      <view class="body">{{summary.next_step}}</view>
+    </view>
+
+    <view class="btn-primary" bindtap="copyText" hover-class="is-active" hover-stay-time="80">复制文本</view>
+    <view class="btn-ghost mt16" bindtap="goCare" hover-class="is-active" hover-stay-time="80">回到就诊与帮助</view>
+
+    <view class="tiny mt24">
+      看病时把这份给医生看就行。他还想细问的，会再问你。
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <view>还没有摘要。</view>
+    <view class="mt12">先把症状过一遍，几分钟就好，之后随时能再生成。</view>
+    <view class="btn-primary mt24" bindtap="goTriage" hover-class="is-active" hover-stay-time="80">过一遍症状</view>
+    <view class="btn-ghost mt16" bindtap="goCare" hover-class="is-active" hover-stay-time="80">回到就诊与帮助</view>
+  </view>
+</view>

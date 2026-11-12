@@ -1,0 +1,138 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="h1">记一次</view>
+  <view class="muted intro">只填你愿意填的。天天填不是要求，能连续一周就已经很有用。</view>
+
+  <view class="field-row">
+    <text class="field-label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="onDate">
+      <view class="picker">{{date}}</view>
+    </picker>
+  </view>
+
+  <view class="block">
+    <view class="row">
+      <text class="block-title">此刻的疼痛</text>
+      <text class="tiny">{{nrsLevelText}}</text>
+    </view>
+    <view class="big-value">{{nrs}}</view>
+    <slider
+      min="0"
+      max="10"
+      step="1"
+      value="{{nrs}}"
+      activeColor="#38614F"
+      backgroundColor="#E6EFEC"
+      block-size="24"
+      bindchange="onNrs"
+    />
+    <view class="scale-ends">
+      <text class="tiny">0 无痛</text>
+      <text class="tiny">10 最剧烈</text>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-title">昨晚睡得怎么样</view>
+    <view class="tiny mt6">睡不好和疼会互相拖。这一项值得记。</view>
+    <view class="chips">
+      <view
+        wx:for="{{sleepOptions}}"
+        wx:key="value"
+        class="chip {{sleep === item.value ? 'on' : ''}}"
+        bindtap="pickSleep"
+        data-value="{{item.value}}"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="row">
+      <text class="block-title">今天的紧张程度</text>
+      <text class="tiny">{{stress}} / 10</text>
+    </view>
+    <view class="scale-row">
+      <view
+        class="scale-cell {{stress === item ? 'on' : ''}}"
+        wx:for="{{stressScale}}"
+        wx:key="*this"
+        bindtap="pickStress"
+        data-value="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-title">最明显是在什么时候</view>
+    <view class="tiny mt6">选一个最接近的，选完更容易找到能改的那一环。</view>
+    <view class="chips">
+      <view
+        wx:for="{{triggerOptions}}"
+        wx:key="value"
+        class="chip {{trigger === item.value ? 'on' : ''}}"
+        bindtap="pickTrigger"
+        data-value="{{item.value}}"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="row">
+      <text class="block-title">对生活的影响</text>
+      <text class="tiny">{{limit}} / 10</text>
+    </view>
+    <slider
+      min="0"
+      max="10"
+      step="1"
+      value="{{limit}}"
+      activeColor="#38614F"
+      backgroundColor="#E6EFEC"
+      block-size="24"
+      bindchange="onLimit"
+    />
+  </view>
+
+  <view class="block">
+    <view class="block-title">今天注意到的口腔行为</view>
+    <view class="tiny mt6">可多选，没注意到就不选。</view>
+    <view class="chips">
+      <view
+        wx:for="{{habitOptions}}"
+        wx:key="key"
+        class="chip {{item.checked ? 'on' : ''}}"
+        bindtap="toggleHabit"
+        data-key="{{item.key}}"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-title">备注</view>
+    <textarea
+      class="textarea"
+      placeholder="今天发生了什么、什么时候最明显（可以留空）"
+      value="{{note}}"
+      bindinput="onNote"
+      maxlength="300"
+      auto-height
+    />
+  </view>
+
+  <view wx:if="{{errorMsg}}" class="note-caution mt24">{{errorMsg}}</view>
+  <view wx:if="{{savedLocal}}" class="tiny mt16">已存在本机。登录后会自动补同步，不会丢。</view>
+
+  <view class="btn-primary mt24 {{saving ? 'is-disabled' : ''}}" bindtap="save" hover-class="is-active" hover-stay-time="80">
+    {{saving ? '正在保存…' : '保存'}}
+  </view>
+  <view class="safe-bottom"></view>
+</view>

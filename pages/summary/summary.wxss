@@ -1,0 +1,46 @@
+.intro {
+  margin: 16rpx 0 32rpx;
+}
+
+.mb {
+  margin-bottom: 24rpx;
+}
+
+.mt16 {
+  margin-top: 16rpx;
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+.item {
+  padding: 14rpx 0;
+  align-items: flex-start;
+}
+
+.label {
+  font-size: 26rpx;
+  color: var(--ink-2);
+  width: 160rpx;
+  flex-shrink: 0;
+}
+
+.value {
+  font-size: 28rpx;
+  color: var(--ink);
+  flex: 1;
+  text-align: right;
+  line-height: 1.6;
+}
+
+.small {
+  font-size: 28rpx;
+  margin-bottom: 12rpx;
+}
+
+.flag {
+  font-size: 28rpx;
+  color: #6E3A32;
+  line-height: 1.7;
+}

@@ -1,0 +1,105 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="h1">研究任务</view>
+  <view class="muted intro">研究是单独的一条路。你完全可以只用自我管理，不参加。</view>
+
+  <!-- 未同意 -->
+  <view wx:if="{{!consented}}">
+    <view wx:if="{{!hasSession}}" class="note-info">
+      参加 A 线研究要先登录，量表才能和研究编号对上。
+      <text class="link-inline" bindtap="goLogin">去登录 ›</text>
+    </view>
+
+    <view class="card">
+      <view class="h2 small">A 线在做什么</view>
+      <view class="para">看你症状、口腔习惯、情绪和下颌活动能力，在半年里怎么变；中途新出现的疼痛也会记下来。</view>
+      <view class="divider"></view>
+      <view class="h2 small">你会经历什么</view>
+      <view class="para">第一次（T0）：填几份问卷，做一次临床检查。符合条件的人，加做一次下颌运动的仪器记录。</view>
+      <view class="para">第 6 周左右（T1）：简单问几句，看有没有变化。</view>
+      <view class="para">第 12 周左右（T2）、半年时（T3）：再填一次，顺便看看有没有新出现的疼痛。</view>
+      <view class="divider"></view>
+      <view class="h2 small">时间与数据</view>
+      <view class="para">每次问卷 10–20 分钟。研究数据单独存，编号和联系方式分开。</view>
+      <view class="para">不想参加了随时能退，自我管理的功能照样能用。</view>
+    </view>
+
+    <view
+      class="option {{agree ? 'is-selected' : ''}} mt24"
+      bindtap="toggleAgree"
+    >
+      我已阅读以上说明，自愿参加 A 线研究
+    </view>
+
+    <view class="btn-primary {{agree && !saving ? '' : 'is-disabled'}}" bindtap="join" hover-class="is-active" hover-stay-time="80">同意并开始 T0</view>
+
+    <view class="tiny mt24">
+      平时记的东西，不会事后被拿去做研究。只有你在这里单独同意，才会建立研究任务。
+    </view>
+  </view>
+
+  <!-- 已同意 -->
+  <view wx:else>
+    <view class="note-info">你已经在 A 线研究里了。访视时间不会自动改；错过了，联系研究团队改约。</view>
+
+    <!-- 量表换过版本时只说这一次，讲清为什么标「旧版」 -->
+    <view wx:if="{{legacyCount}}" class="note-caution mt24">
+      <view class="para">口腔习惯清单（OBC）已经换成 21 项完整版，满分从 48 变成 84。</view>
+      <view class="para">两套题目的分数不是一回事，不能放在一起比。标了「旧版」的那几项，点一下就能用新版重填一次。</view>
+    </view>
+
+    <view class="section">
+      <view class="h2 small">访视安排</view>
+      <view wx:for="{{visits}}" wx:key="id" class="visit {{item.statusClass}}">
+        <view class="row">
+          <text class="visit-name">{{item.label}}</text>
+          <text class="tiny">{{item.timing}}</text>
+        </view>
+        <view class="tiny mt8">{{item.summary}}</view>
+        <view wx:if="{{item.available}}" class="visit-scales">
+          <text
+            wx:for="{{item.scales}}"
+            wx:for-item="sc"
+            wx:key="id"
+            class="scale-chip {{sc.done ? 'done' : ''}} {{sc.legacy ? 'stale' : ''}}"
+            bindtap="openScale"
+            data-scale="{{sc.id}}"
+            data-visit="{{sc.visit}}"
+          >{{sc.short}}{{sc.done ? ' ✓' : ''}}{{sc.legacy ? ' · ' + sc.legacyText : ''}}</text>
+        </view>
+        <view wx:elif="{{item.id === 'T0'}}" class="tiny mt8">临床检查和下颌运动记录由研究团队安排，不在小程序里做。</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="h2 small">B 线：自动支持组</view>
+      <view class="card">
+        <view class="para">两组都能用完整的六周课程。区别只有一个：有没有按固定时间发来的提醒，以及几句按完成情况写好的固定反馈。</view>
+        <view class="para">那些反馈是事先写好、审过的固定句子，比如「你已完成第 2 周的觉察练习，这周还有一次回顾没填」。它不会按你的分数临时给你治疗建议。</view>
+        <view class="tag-pending mt8">你分在哪一组，不会告诉你</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="h2 small">数据边界</view>
+      <view class="card">
+        <view class="para">研究任务里填的量表，存进研究账户，和你平时的记录分开。</view>
+        <view class="para">不想继续了，可以在「就诊与帮助」退出登录，或者直接联系研究团队。</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="h2 small">课程与量表的研究依据</view>
+      <view class="card">
+        <view wx:for="{{evidence}}" wx:key="id" class="ev">
+          <view class="ev-title">{{item.title}}</view>
+          <view class="tiny mt4">{{item.journal}} {{item.year}} · {{item.type}}</view>
+        </view>
+        <view class="tiny mt12">
+          上面这些文献都收进了知识库，还没经过专业审核。审核之前，不会拿来回答你的问题。
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

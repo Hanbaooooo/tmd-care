@@ -1,0 +1,80 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <view class="h1">账户与同步</view>
+  <view class="muted intro">
+    不登录也能用，筛查、课程、记录都存在这台手机上。登录就为一件事：换手机的时候别丢。参加研究时，也靠它把你的编号对上。
+  </view>
+
+  <view wx:if="{{pendingText}}" class="note-info">{{pendingText}}</view>
+
+  <block wx:if="{{step === 'done'}}">
+    <view class="card mt24">
+      <view class="row">
+        <view class="h2">已登录</view>
+        <view class="tag">同步中</view>
+      </view>
+      <view class="muted mt8">记录会存到账号里。换手机用同一个账号登录，就能看到。</view>
+    </view>
+    <view class="btn-primary" bindtap="goBack" hover-class="is-active" hover-stay-time="80">返回</view>
+    <view class="btn-text center mt24" bindtap="onSignOut">退出登录</view>
+  </block>
+
+  <block wx:else>
+    <view class="btn-primary mt24 {{wechatBusy ? 'is-disabled' : ''}}" bindtap="onWechat" hover-class="is-active" hover-stay-time="80">
+      {{wechatBusy ? '正在登录…' : '微信一键登录'}}
+    </view>
+    <view wx:if="{{!wechatAvailable}}" class="tiny mt12">
+      现在还是体验版，微信一键登录要等正式版才能用。先用下面的邮箱验证码。
+    </view>
+
+    <view class="or mt32">或</view>
+
+    <view class="btn-ghost" bindtap="toggleEmail" hover-class="is-active" hover-stay-time="80">
+      {{emailOpen ? '收起邮箱登录' : '用邮箱验证码登录'}}
+    </view>
+
+    <block wx:if="{{emailOpen}}">
+      <block wx:if="{{step === 'start'}}">
+        <view class="field-label">邮箱</view>
+        <input
+          class="field"
+          type="text"
+          placeholder="用于接收验证码"
+          value="{{email}}"
+          bindinput="onEmailInput"
+          confirm-type="done"
+        />
+        <view class="tiny mt12">这个邮箱只用来收验证码。研究编号和你的联系方式，是分开存的。</view>
+        <view class="btn-primary mt20 {{sending ? 'is-disabled' : ''}}" bindtap="onSendCode" hover-class="is-active" hover-stay-time="80">
+          {{sending ? '正在发送…' : '获取验证码'}}
+        </view>
+      </block>
+
+      <block wx:if="{{step === 'code'}}">
+        <view class="muted mt24">验证码已发送至 {{email}}</view>
+        <view class="field-label">验证码</view>
+        <input
+          class="field"
+          type="number"
+          placeholder="输入验证码"
+          value="{{code}}"
+          bindinput="onCodeInput"
+          maxlength="8"
+        />
+        <view class="btn-primary mt20 {{verifying ? 'is-disabled' : ''}}" bindtap="onVerify" hover-class="is-active" hover-stay-time="80">
+          {{verifying ? '正在验证…' : '登录并同步'}}
+        </view>
+        <view class="btn-text center mt20" bindtap="onBack">换一个邮箱</view>
+      </block>
+    </block>
+
+    <view wx:if="{{error}}" class="note-danger mt24">{{error}}</view>
+
+    <view class="divider mt32"></view>
+    <view class="btn-text center" bindtap="skip">先不登录，继续用本机记录</view>
+    <view class="tiny mt24">
+      这里不能看病。脸明显肿了、外伤后疼得更厉害、张嘴合不上，直接去医院。
+    </view>
+  </block>
+</view>

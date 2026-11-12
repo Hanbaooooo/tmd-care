@@ -1,0 +1,84 @@
+<bg-layer />
+<view class="page tab-page">
+  <nav-bar />
+  <view class="row head">
+    <view>
+      <view class="h1">我的记录</view>
+      <view wx:if="{{subline}}" class="tiny mt6">{{subline}}</view>
+    </view>
+    <view class="btn-text" bindtap="goAdd">记一次</view>
+  </view>
+
+  <view wx:if="{{weekly}}">
+    <!-- 周报告 -->
+    <view class="card">
+      <view class="row">
+        <text class="h2 small">本周</text>
+        <text class="tiny">记录了 {{weekly.daysRecorded}} / 7 天</text>
+      </view>
+
+      <view class="bars">
+        <view wx:for="{{weekly.daily}}" wx:key="key" class="bar-col">
+          <view class="bar-wrap">
+            <view wx:if="{{item.value !== null}}" class="bar {{weekly.tone}}" style="height: {{item.height}}%"></view>
+            <view wx:else class="bar-missing"></view>
+          </view>
+          <text class="bar-value">{{item.value === null ? '—' : item.value}}</text>
+          <text class="bar-date">{{item.label}}</text>
+        </view>
+      </view>
+
+      <view class="cmp {{weekly.tone}}">{{weekly.compareText}}</view>
+
+      <view class="divider"></view>
+      <view class="next-line">
+        <view class="next-k">下周一件事</view>
+        <view class="next-v">{{weekly.nextThing}}</view>
+      </view>
+
+      <view class="tiny mt12">没记的日期就空着。不替你补，也不会因为缺了几天就判你没做到。</view>
+    </view>
+
+    <!-- 依从与同步 -->
+    <view wx:if="{{stats}}" class="card-flat stat-line">
+      <view class="muted">{{stats.text}}</view>
+      <view class="tiny mt6">{{stats.hint}}</view>
+    </view>
+
+    <view class="section">
+      <view class="h2 small">全部记录</view>
+      <view
+        wx:for="{{records}}"
+        wx:key="id"
+        class="rec"
+        bindtap="openRecord"
+        data-id="{{item.id}}"
+      >
+        <view class="rec-left">
+          <view class="rec-date">{{item.dateText}}</view>
+          <view class="tiny mt6">{{item.extra}}</view>
+        </view>
+        <view class="rec-right">
+          <text class="rec-nrs {{item.tone}}">{{item.nrs}}</text>
+          <text class="tiny">/10</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{loading}}" class="empty">正在读取…</view>
+
+  <view wx:else class="empty">
+    <view>还没有记录。</view>
+    <view class="mt12">记一次之后，两周的变化才有参照。</view>
+    <view class="btn-primary mt24" bindtap="goAdd" hover-class="is-active" hover-stay-time="80">记第一次</view>
+  </view>
+
+  <view wx:if="{{pendingSync}}" class="note-info mt24" bindtap="goLogin">
+    有内容还没同步。点一下登录补传，现在的内容都在这台手机上。
+  </view>
+  <view wx:elif="{{localOnly}}" class="tiny mt24">
+    记录保存在这台手机上。换设备时用同一账号登录即可同步。
+  </view>
+  <view class="tab-fade"></view>
+</view>

@@ -1,0 +1,17 @@
+# 依赖与构建产物
+node_modules/
+miniprogram_npm/
+
+# 微信开发者工具的本机私有配置（含个人设置、上次编译状态，不该共享）
+project.private.config.json
+
+# 编辑器与系统
+.DS_Store
+Thumbs.db
+*.log
+
+# 本项目的协作助手记忆（个人笔记，不进仓库）
+.workbuddy/
+
+# 临时导出
+*.zip

@@ -1,0 +1,59 @@
+<bg-layer />
+<view class="page tab-page">
+  <nav-bar />
+  <view class="h1">六周计划</view>
+  <view class="muted intro">每周只做四件事：学一段、做一次练习、在生活中试一次、周末回顾。中间停下也没关系，回来会接着上次的位置。</view>
+
+  <view class="summary-card">
+    <view class="row">
+      <text class="tiny">已完成 {{doneCount}} / 6 周</text>
+      <text class="tiny">{{percent}}%</text>
+    </view>
+    <view class="progress-track mt10">
+      <view class="progress-fill" style="width: {{percent}}%"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{currentWeek}}" class="primary-task mt24" bindtap="openWeek" data-week="{{currentWeek.week}}">
+    <view class="primary-task-label">本周</view>
+    <view class="primary-task-title">第 {{currentWeek.week}} 周：{{currentWeek.title}}</view>
+    <view class="muted mt12">{{currentWeek.summary}}</view>
+    <view class="task-cta">开始本周 ›</view>
+  </view>
+
+  <view wx:elif="{{doneCount === 6}}" class="primary-task mt24" bindtap="openWeek" data-week="6">
+    <view class="primary-task-label">六周已完成</view>
+    <view class="primary-task-title">把有效的部分留下来</view>
+    <view class="muted mt12">不用再从第 1 周走一遍。每天记一个数字，每周做一次复查，剩下的按原来的过。</view>
+    <view class="task-cta">回看第 6 周 ›</view>
+  </view>
+
+  <view wx:if="{{!signedIn}}" class="note-info mt24">
+    现在没登录，进度只存在这台手机上。换了手机就接不上了。
+  </view>
+
+  <view class="section">
+    <view class="h2 small">全部周次</view>
+    <view
+      wx:for="{{weeks}}"
+      wx:key="week"
+      class="week-row {{item.isCurrent ? 'is-current' : ''}}"
+      bindtap="openWeek"
+      data-week="{{item.week}}"
+    >
+      <view class="week-no">{{item.week}}</view>
+      <view class="week-main">
+        <view class="week-title">{{item.title}}</view>
+        <view class="week-marks">
+          <text class="mark {{item.learn_done ? 'on' : ''}}">学习</text>
+          <text class="mark {{item.practice_done ? 'on' : ''}}">练习</text>
+          <text class="mark {{item.review_done ? 'on' : ''}}">回顾</text>
+        </view>
+      </view>
+      <text class="week-arrow">›</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!signedIn}}" class="btn-ghost mt24" bindtap="goLogin" hover-class="is-active" hover-stay-time="80">登录后换手机也能接着做</view>
+  <view class="tab-fade"></view>
+</view>

@@ -1,0 +1,100 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+  <!-- 安全核对 -->
+  <view wx:if="{{stage === 'safety'}}">
+    <view class="h1">先做一次安全核对</view>
+    <view class="muted intro">下面这些情况要尽快让医生看。有就勾上，没有就跳过。</view>
+
+    <view
+      wx:for="{{redFlags}}"
+      wx:key="key"
+      class="option {{item.checked ? 'is-selected' : ''}}"
+      bindtap="toggleFlag"
+      data-key="{{item.key}}"
+    >
+      {{item.label}}
+    </view>
+
+    <view wx:if="{{hasFlag}}" class="note-danger mt">
+      你勾了需要尽快处理的情况。直接去口腔急诊或医院，别先在家观察。
+    </view>
+
+    <view class="btn-primary mt" bindtap="afterSafety" hover-class="is-active" hover-stay-time="80">
+      {{hasFlag ? '查看该怎么做' : '没有这些情况，继续'}}
+    </view>
+  </view>
+
+  <!-- 逐题 -->
+  <view wx:if="{{stage === 'question'}}">
+    <view class="progress-row">
+      <text class="tiny">第 {{qIndex + 1}} / {{total}} 个问题</text>
+    </view>
+    <view class="progress-track mb">
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+
+    <view class="h2">{{q.title}}</view>
+    <view class="muted hint">{{q.hint}}</view>
+
+    <view wx:if="{{q.type === 'scale'}}">
+      <view class="scale-value">{{scaleValue}}</view>
+      <slider
+        min="0"
+        max="10"
+        step="1"
+        value="{{scaleValue}}"
+        activeColor="#38614F"
+        backgroundColor="#E6EFEC"
+        block-size="24"
+        bindchange="onScaleChange"
+      />
+      <view class="scale-ends">
+        <text class="tiny">0 没有影响</text>
+        <text class="tiny">10 完全无法正常生活</text>
+      </view>
+    </view>
+
+    <view wx:else>
+      <view
+        wx:for="{{q.options}}"
+        wx:key="value"
+        class="option {{item.checked ? 'is-selected' : ''}}"
+        bindtap="toggleOption"
+        data-value="{{item.value}}"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <view class="btn-ghost flex1" bindtap="prev" hover-class="is-active" hover-stay-time="80">上一题</view>
+      <view class="btn-primary flex1 {{canNext ? '' : 'is-disabled'}}" bindtap="next" hover-class="is-active" hover-stay-time="80">继续</view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view wx:if="{{stage === 'result'}}">
+    <view class="result-head {{result.level === 'urgent' ? 'urgent' : ''}}">
+      <view class="tiny">{{result.level === 'urgent' ? '需要尽快处理' : (result.level === 'clinic' ? '建议安排评估' : '可以先自我管理')}}</view>
+      <view class="h1 mt8">{{result.headline}}</view>
+    </view>
+
+    <view wx:if="{{result.reasons.length}}" class="card">
+      <view class="h2 small">为什么这么建议</view>
+      <view wx:for="{{result.reasons}}" wx:key="*this" class="reason">{{item}}</view>
+    </view>
+
+    <view class="card">
+      <view class="h2 small">接下来可以做</view>
+      <view wx:for="{{result.actions}}" wx:key="*this" class="action">{{index + 1}}. {{item}}</view>
+    </view>
+
+    <view class="btn-primary" bindtap="saveAndSummary" hover-class="is-active" hover-stay-time="80">生成就诊摘要</view>
+    <view class="btn-ghost mt16" bindtap="goPlan" hover-class="is-active" hover-stay-time="80">去看看六周计划</view>
+
+    <view class="tiny mt24">
+      这份东西只整理你填的内容，不做诊断，也不给分型。到底怎么回事，交给医生判断。
+    </view>
+  </view>
+</view>

@@ -1,0 +1,101 @@
+.intro {
+  margin: 16rpx 0 32rpx;
+}
+
+/* 行内链接：只在提示句里用，不单独占一行 */
+.link-inline {
+  color: var(--moss);
+  margin-left: 8rpx;
+}
+
+.mt4 {
+  margin-top: 4rpx;
+}
+
+.mt8 {
+  margin-top: 8rpx;
+}
+
+.mt12 {
+  margin-top: 12rpx;
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+.small {
+  font-size: 30rpx;
+  margin-bottom: 12rpx;
+}
+
+.para {
+  font-size: 28rpx;
+  line-height: 1.75;
+  color: var(--ink);
+  margin-bottom: 12rpx;
+}
+
+.visit {
+  background: transparent;
+  border: none;
+  border-bottom: 1rpx solid var(--line-soft);
+  border-radius: 0;
+  padding: 28rpx 0;
+  margin-bottom: 0;
+}
+
+.visit.done {
+  background: transparent;
+  border-bottom-color: var(--moss);
+}
+
+.visit-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.visit-scales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.scale-chip {
+  padding: 12rpx 22rpx;
+  background: transparent;
+  border: 1rpx solid var(--line);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: var(--ink);
+}
+
+.scale-chip.done {
+  background: var(--sage-bg);
+  border-color: var(--moss);
+  color: var(--moss);
+}
+
+/* 旧版本结果：不当作已完成，点了就重填 */
+.scale-chip.stale {
+  border-style: dashed;
+  border-color: var(--note);
+  color: var(--note);
+}
+
+.ev {
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid var(--paper-2);
+}
+
+.ev:last-child {
+  border-bottom: none;
+}
+
+.ev-title {
+  font-size: 27rpx;
+  color: var(--ink);
+  line-height: 1.55;
+}

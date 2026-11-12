@@ -1,0 +1,58 @@
+<bg-layer />
+<view class="chat-page">
+  <nav-bar back="{{true}}" />
+  <view class="chat-head">
+    <view class="h1">安心</view>
+    <view class="muted intro">
+      我只回答已经审核过的知识，并把话题带到对应的功能页。我不做诊断，也不给分型。
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="thread" scroll-into-view="{{scrollTo}}" scroll-with-animation>
+    <view wx:if="{{messages.length === 0}}" class="empty-thread">
+      <view class="tiny">你可以点下面的问题，也可以自己输入。</view>
+    </view>
+
+    <view wx:for="{{messages}}" wx:key="key" id="m{{index}}">
+      <view wx:if="{{item.role === 'user'}}" class="bubble user">{{item.text}}</view>
+      <view wx:else class="bubble anxin">
+        <view wx:for="{{item.paras}}" wx:for-item="para" wx:key="*this" class="para">{{para}}</view>
+        <view wx:if="{{item.sourceText}}" class="sources">依据：{{item.sourceText}}</view>
+        <view wx:if="{{item.boundary}}" class="boundary">{{item.boundary}}</view>
+        <view wx:if="{{item.actions.length}}" class="acts">
+          <text
+            wx:for="{{item.actions}}"
+            wx:for-item="act"
+            wx:key="url"
+            class="act"
+            bindtap="goAction"
+            data-url="{{act.url}}"
+          >{{act.label}} ›</text>
+        </view>
+      </view>
+    </view>
+    <view id="bottom"></view>
+  </scroll-view>
+
+  <view class="suggest">
+    <view
+      wx:for="{{suggestions}}"
+      wx:key="*this"
+      class="suggest-chip"
+      bindtap="askSuggestion"
+      data-q="{{item}}"
+    >{{item}}</view>
+  </view>
+
+  <view class="composer">
+    <input
+      class="composer-input"
+      placeholder="问一个关于症状或课程的问题"
+      value="{{draft}}"
+      bindinput="onInput"
+      bindconfirm="send"
+      confirm-type="send"
+    />
+    <view class="composer-send" bindtap="send">发送</view>
+  </view>
+</view>

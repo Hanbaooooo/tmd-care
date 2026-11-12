@@ -1,0 +1,136 @@
+<bg-layer />
+<view class="page" wx:if="{{ready}}">
+  <nav-bar back="{{true}}" />
+  <view class="h1">你的筛查结果</view>
+  <view wx:if="{{syncText}}" class="tiny sync">{{syncText}}</view>
+
+  <!-- 结论 -->
+  <view class="card card-lift mt20 rise-1">
+    <view class="tag">{{care.level === 'self' ? '可先自我管理' : '需要临床确认'}}</view>
+    <view class="conclusion">{{impression}}</view>
+    <view class="divider"></view>
+    <view class="care-head">{{care.headline}}</view>
+    <view wx:if="{{care.text}}" class="muted mt8">{{care.text}}</view>
+    <view class="btn-primary mt20" bindtap="goSummary" hover-class="is-active">生成一份给医生看的摘要</view>
+  </view>
+
+  <!-- 第一部分 -->
+  <view class="section">
+    <view class="axis-label">第一部分</view>
+    <view class="h2">你的症状更像哪一类</view>
+    <view class="muted mt8">
+      这些是从你的回答里推出来的方向。得医生摸一下咀嚼肌、量一下张口度，才能确定。
+    </view>
+  </view>
+
+  <view wx:if="{{groups.length === 0}}" class="card">
+    <view class="muted">这次回答没指向典型的下颌问题。可以先记着看，症状持续或变重再来评一次。</view>
+  </view>
+
+  <view class="card" wx:for="{{groups}}" wx:key="key">
+    <view class="row">
+      <view class="group-title">{{item.label}}</view>
+      <view wx:if="{{item.isPrimary && groups.length > 1}}" class="tag">主要</view>
+    </view>
+    <view class="muted mt8">{{item.plain}}</view>
+
+    <view class="two-col mt16">
+      <view class="col">
+        <view class="col-head support">支持依据</view>
+        <view wx:for="{{item.basis}}" wx:key="*this" wx:for-item="b" class="col-item">· {{b}}</view>
+      </view>
+      <view class="col">
+        <view class="col-head unknown">仍不能确定</view>
+        <view wx:for="{{item.needs}}" wx:key="*this" wx:for-item="n" class="col-item">· {{n}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{findings.length}}" class="card">
+    <view class="h2 small">另外，这三件事要让医生知道</view>
+    <view wx:for="{{findings}}" wx:key="*this" class="para">· {{item}}</view>
+  </view>
+
+  <!-- 第二部分 -->
+  <view class="section">
+    <view class="axis-label">第二部分</view>
+    <view class="h2">什么在让不适持续</view>
+    <view class="muted mt8">
+      下面几项是从你刚答的题里算出来的，看哪些情绪和习惯在让不适拖着不走。它只用来决定先练哪一项。
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="summary">{{summary}}</view>
+
+    <view class="dim" wx:for="{{dims}}" wx:key="key">
+      <view class="row">
+        <view class="dim-label">{{item.label}}</view>
+        <view class="dim-value {{item.tone}}">{{item.detail}}</view>
+      </view>
+      <view class="dim-track">
+        <view class="dim-fill {{item.tone}}" style="width:{{item.width}}%"></view>
+      </view>
+      <view class="tiny dim-text">{{item.text}}</view>
+    </view>
+
+    <view wx:if="{{notes.length}}" class="divider"></view>
+    <view wx:for="{{notes}}" wx:key="*this" class="muted note-line">· {{item}}</view>
+  </view>
+
+  <view class="note-info">
+    这不是人格测验，也不是在说你的不适是「心理问题」。它只表示：在接下来六周里，哪一项最值得先动。
+  </view>
+
+  <!-- 起点 -->
+  <view wx:if="{{plan}}" class="section">
+    <view class="h2">接下来做什么</view>
+  </view>
+  <view wx:if="{{plan}}" class="card">
+    <view class="plan-line">
+      <view class="plan-k">今天</view>
+      <view class="plan-v">{{plan.firstAction}}</view>
+    </view>
+    <view class="plan-line">
+      <view class="plan-k">记录</view>
+      <view class="plan-v">{{plan.recordHint}}</view>
+    </view>
+    <view class="plan-line">
+      <view class="plan-k">六周</view>
+      <view class="plan-v">{{plan.weeks}}</view>
+    </view>
+    <view class="btn-primary mt20" bindtap="goPlan" hover-class="is-active" hover-stay-time="80">开始六周计划</view>
+    <view class="btn-ghost mt16" bindtap="goRecord" hover-class="is-active" hover-stay-time="80">先记一次今天的症状</view>
+  </view>
+
+  <!-- 依据与缺口 -->
+  <view class="section">
+    <view class="h2">这份结果依据什么、缺什么</view>
+  </view>
+  <view class="card">
+    <view class="col-head support">支持依据</view>
+    <view wx:for="{{basis}}" wx:key="*this" class="col-item">· {{item}}</view>
+    <view class="divider"></view>
+    <view class="col-head unknown">仍不能确定</view>
+    <view wx:for="{{missing}}" wx:key="*this" class="col-item">· {{item}}</view>
+  </view>
+
+  <!-- 边界 -->
+  <view class="card flat">
+    <view class="h2 small">这份结果不做什么</view>
+    <view wx:for="{{boundaries}}" wx:key="*this" class="tiny bound-line">· {{item}}</view>
+  </view>
+
+  <view wx:if="{{localOnly}}" class="btn-ghost" bindtap="goLogin" hover-class="is-active" hover-stay-time="80">登录后同步到账户</view>
+  <view class="btn-text center mt24" bindtap="redo">重新做一次筛查</view>
+  <view class="btn-text center mt16" bindtap="goHome">先去首页</view>
+  <view class="safe-bottom"></view>
+</view>
+
+<view class="page" wx:else>
+  <nav-bar back="{{true}}" />
+  <view class="empty">还没有筛查结果。
+    <view class="mt16"><text class="btn-text" bindtap="redo">现在做一次</text></view>
+    <view class="mt16"><text class="btn-text" bindtap="goHome">先去首页</text></view>
+  </view>
+</view>

@@ -1,0 +1,156 @@
+.head {
+  padding: 16rpx 0 28rpx;
+  align-items: flex-end;
+}
+
+.mt6 {
+  margin-top: 6rpx;
+}
+
+.mt12 {
+  margin-top: 12rpx;
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+.small {
+  font-size: 30rpx;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 12rpx;
+  margin-top: 28rpx;
+  height: 240rpx;
+}
+
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.bar {
+  width: 22rpx;
+  border-radius: 0;
+  background: var(--moss);
+  min-height: 6rpx;
+}
+
+.bar.caution {
+  background: var(--note);
+}
+
+.bar.danger {
+  background: var(--alert);
+}
+
+.bar-value {
+  font-size: 22rpx;
+  color: var(--ink);
+  margin-top: 8rpx;
+}
+
+.bar-date {
+  font-size: 20rpx;
+  color: var(--ink-3);
+  margin-top: 2rpx;
+}
+
+.bar-missing {
+  width: 32rpx;
+  height: 6rpx;
+  background: var(--paper-2);
+  border-radius: 4rpx;
+}
+
+.bar.good {
+  background: var(--moss);
+}
+
+.cmp {
+  margin-top: 20rpx;
+  font-size: 27rpx;
+  line-height: 1.6;
+  color: #4A5F59;
+}
+
+.cmp.good {
+  color: var(--moss);
+}
+
+.cmp.caution {
+  color: var(--note);
+}
+
+.next-line {
+  display: flex;
+  gap: 16rpx;
+}
+
+.next-k {
+  flex: 0 0 auto;
+  width: 140rpx;
+  font-size: 25rpx;
+  color: var(--moss);
+  padding-top: 4rpx;
+}
+
+.next-v {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.stat-line {
+  margin-bottom: 8rpx;
+}
+
+.rec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  border-bottom: 1rpx solid var(--line-soft);
+  border-radius: 0;
+  padding: 28rpx 0;
+  margin-top: 0;
+}
+
+.rec-date {
+  font-size: 29rpx;
+  color: var(--ink);
+}
+
+.rec-right {
+  display: flex;
+  align-items: baseline;
+}
+
+.rec-nrs {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: var(--moss);
+}
+
+.rec-nrs.caution {
+  color: var(--note);
+}
+
+.rec-nrs.danger {
+  color: var(--alert);
+}

@@ -1,0 +1,339 @@
+/* 顶部阅读进度：3rpx 细线，不做成仪表盘 */
+.rail {
+  height: 3rpx;
+  margin: 0 -32rpx 30rpx;
+  background: var(--paper-2);
+}
+
+.rail-fill {
+  height: 3rpx;
+  background: var(--moss);
+  transition: width 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.resume {
+  color: var(--ink-3);
+  font-size: 23rpx;
+  line-height: 1.7;
+  padding: 0 0 22rpx;
+  margin-bottom: 22rpx;
+  border-bottom: 1rpx solid var(--line-soft);
+}
+
+/* ---------- 头部 ---------- */
+.eyebrow {
+  font-size: 21rpx;
+  letter-spacing: 3rpx;
+  color: var(--ink-3);
+}
+
+.intro-lede {
+  margin-top: 14rpx;
+  font-size: 27rpx;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.step-head {
+  display: flex;
+  gap: 16rpx;
+  margin: 38rpx 0 28rpx;
+}
+
+.step-idx {
+  font-size: 21rpx;
+  color: var(--ink-3);
+  letter-spacing: 1rpx;
+  margin-top: 12rpx;
+}
+
+.step-body {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 40rpx;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.step-hint {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+/* ---------- 题目 ---------- */
+.q {
+  margin-bottom: 46rpx;
+}
+
+.q-head {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.q-no {
+  font-size: 20rpx;
+  color: var(--ink-3);
+  letter-spacing: 1rpx;
+  margin-top: 10rpx;
+}
+
+.q-body {
+  flex: 1;
+}
+
+.q-title {
+  font-size: 30rpx;
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.q-hint {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  line-height: 1.65;
+  color: var(--ink-3);
+}
+
+/* 选项改成表单行：不用一叠卡片，行间细线分隔，选中是一条淡带 */
+.option {
+  background: transparent;
+  border: none;
+  border-bottom: 1rpx solid var(--line-soft);
+  border-left: 3rpx solid transparent;
+  border-radius: 0;
+  padding: 26rpx 20rpx 26rpx 28rpx;
+  margin: 0;
+  font-size: 29rpx;
+  line-height: 1.5;
+  color: var(--ink);
+  transition: background 200ms, color 200ms, border-color 200ms;
+}
+
+.option.is-selected {
+  background: rgba(56, 97, 79, 0.085);
+  color: var(--moss);
+  font-weight: 500;
+  border-bottom-color: transparent;
+  border-left-color: var(--moss);
+}
+
+.option:active {
+  background: rgba(56, 97, 79, 0.05);
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.check {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid var(--line);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.check.on {
+  border-color: var(--moss);
+  background: var(--moss);
+}
+
+.check-mark {
+  color: #F3F7F4;
+  font-size: 19rpx;
+  line-height: 1;
+}
+
+.flag-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.quiet {
+  text-align: center;
+  padding: 26rpx 0 6rpx;
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.quiet:active {
+  opacity: 0.55;
+}
+
+/* ---------- 量表 ---------- */
+.scale-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14rpx;
+  margin-bottom: 14rpx;
+}
+
+.scale-num {
+  font-size: 48rpx;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.scale-level {
+  font-size: 25rpx;
+  color: var(--moss);
+}
+
+.scale-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.scale-cell {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 14rpx;
+  border: 1rpx solid var(--line);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 27rpx;
+  color: var(--ink);
+  flex: 0 0 auto;
+  transition: background 180ms;
+}
+
+.scale-cell.on {
+  background: var(--moss);
+  border-color: var(--moss);
+  color: #F3F7F4;
+}
+
+/* ---------- 矩阵 ---------- */
+.legend {
+  font-size: 23rpx;
+  color: var(--ink-3);
+  line-height: 1.65;
+  margin-bottom: 10rpx;
+}
+
+.grid-row {
+  border-bottom: 1rpx solid var(--line-soft);
+  padding: 20rpx 0;
+}
+
+.grid-label {
+  font-size: 27rpx;
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+  color: var(--ink);
+}
+
+.grid-opts {
+  display: flex;
+  gap: 8rpx;
+}
+
+.grid-cell {
+  flex: 1;
+  height: 64rpx;
+  border-radius: 12rpx;
+  border: 1rpx solid var(--line);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: var(--ink);
+}
+
+.grid-cell.on {
+  background: rgba(56, 97, 79, 0.12);
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1rpx var(--moss);
+  color: var(--moss);
+  font-weight: 500;
+}
+
+/* ---------- 说明 ---------- */
+.boundary {
+  background: var(--note-bg);
+  border-radius: 20rpx;
+  padding: 24rpx 26rpx;
+}
+
+.boundary-strong {
+  font-size: 26rpx;
+  color: #2F4E58;
+  font-weight: 500;
+}
+
+.boundary-text {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  line-height: 1.7;
+  color: #46646E;
+}
+
+.quiet-note {
+  margin: 10rpx 0 8rpx;
+  font-size: 22rpx;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.mt24 {
+  margin-top: 24rpx;
+}
+
+/* ---------- 底部：固定操作条，内容留出空间 ---------- */
+.foot-space {
+  height: 190rpx;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 14rpx;
+  padding: 20rpx 32rpx calc(22rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    180deg,
+    rgba(237, 241, 236, 0) 0%,
+    rgba(237, 241, 236, 0.94) 26%,
+    #EDF1EC 62%
+  );
+}
+
+.foot-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.foot-btn.back {
+  flex: 0 0 auto;
+  min-width: 140rpx;
+  font-size: 26rpx;
+  color: var(--ink-2);
+}
+
+.foot-btn.grow {
+  flex: 1 1 auto;
+}
+
+.is-fade {
+  opacity: 0.55;
+}
