@@ -29,9 +29,10 @@ page {
   --alert-bg: rgba(150, 86, 74, 0.1);
 
   min-height: 100%;
-  /* 只留纯色兜底：渐变与颗粒交给 <bg-layer /> 钉在视口上画，
-     这样长页面滚动时不会因为背景盒高度变化而露出分层硬边 */
-  background-color: #F4FAF8;
+  /* 兜底底色刻意取背景层竖向渐变的末端色（#EFF7F4）。
+     万一某台机器上 fixed 层只铺了半屏，露出来的也是同色，
+     不会出现"上下两块颜色"的硬边。改渐变末端色时必须同步改这里。 */
+  background-color: #EFF7F4;
   color: var(--ink);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
   font-size: 30rpx;
