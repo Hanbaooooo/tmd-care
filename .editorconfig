@@ -1,0 +1,24 @@
+# 让不同编辑器对同一份代码的排版一致，避免 diff 里全是缩进/换行的噪音。
+# VS Code 需装 EditorConfig 扩展才生效；JetBrains 系、WebStorm 原生支持。
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Markdown 行尾两个空格表示换行，不能裁掉
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{json,jsonc}]
+indent_size = 2
+
+[*.wxml]
+indent_size = 2
+
+[*.wxss]
+indent_size = 2

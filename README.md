@@ -26,7 +26,7 @@ npm install        # 目前只有开发期用到的工具依赖，小程序本�
 
 ### 第一步：GitHub 加协作者（必须做，2 分钟）
 
-1. 打开 `https://github.com/Hanbaooooo/-/settings/access`
+1. 打开 `https://github.com/Hanbaooooo/tmd-care/settings/access`
 2. 点 **Add people** → 输入对方的 **GitHub 用户名**（不是昵称，是 `@` 后面那串）→ 权限选 **Write** → 发送邀请
 3. 对方登录 GitHub，在邮箱里点接受；或直接打开仓库页面顶部那条黄色横幅接受
 
@@ -35,10 +35,10 @@ npm install        # 目前只有开发期用到的工具依赖，小程序本�
 ### 第二步：对方把代码拉下来
 
 ```bash
-git clone https://github.com/Hanbaooooo/-.git tmd    # 最后的 tmd 是本地目录名，建议加
+git clone https://github.com/Hanbaooooo/tmd-care.git
 ```
 
-> 仓库名是一个横杠 `-`，不加目录名的话本地会生成一个叫 `-` 的文件夹，命令行里 `cd -` 是"回到上一个目录"，会踩坑。
+会得到一个 `tmd-care/` 目录，进去就是完整项目。
 
 ### 第三步：在开发者工具里打开
 
