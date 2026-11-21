@@ -1,13 +1,51 @@
 const store = require('../../utils/store');
 const session = require('../../utils/session');
 const local = require('../../utils/local');
-const course = require('../../data/course');
 const triage = require('../../data/triage');
 const scales = require('../../data/scales');
 const screen = require('../../data/screen');
 const psych = require('../../data/psych');
 const weeks = require('../../utils/weeks');
 const CONFIG = require('../../data/config');
+
+// 就诊状态只影响「医师那边看到什么」，不评价病情
+const VISIT_STATUS = {
+  waiting_self_report: { text: '待自评', tone: 'note', act: '开始自评' },
+  submitted: { text: '待医师复核', tone: 'caution', act: '查看报告' },
+  signed: { text: '医师已签核', tone: 'calm', act: '查看定稿报告' },
+};
+
+function visitView(row) {
+  if (!row) {
+    return {
+      has: false,
+      id: null,
+      visitNo: '',
+      statusText: '未绑定',
+      tone: 'note',
+      metaText: '',
+      actText: '绑定本次就诊',
+    };
+  }
+  const st = VISIT_STATUS[row.status] || VISIT_STATUS.waiting_self_report;
+  const meta = [row.clinic, row.visit_date].filter(Boolean).join(' · ');
+  return {
+    has: true,
+    id: row.id,
+    visitNo: row.visit_no || '',
+    statusText: st.text,
+    tone: st.tone,
+    metaText: meta,
+    actText: st.act,
+  };
+}
+
+function newVisitNo() {
+  const d = new Date();
+  const p = (n) => (n < 10 ? '0' + n : '' + n);
+  const tail = String(Math.floor(Math.random() * 9000) + 1000);
+  return 'V' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + tail;
+}
 
 function greetingText() {
   const h = new Date().getHours();
@@ -34,7 +72,6 @@ function formatDate(str) {
 
 Page({
   data: {
-    buildTag: 'B2110',
     greeting: '你好',
     dateLine: '',
     signedIn: false,
@@ -42,6 +79,16 @@ Page({
     screenDigest: null,
     psychDigest: null,
     justSaved: false,
+    // 本次就诊：候诊扫码后建立，之后所有填写都挂在它下面
+    visit: {
+      has: false,
+      id: null,
+      visitNo: '',
+      statusText: '',
+      tone: 'note',
+      metaText: '',
+      actText: '绑定本次就诊',
+    },
     anchor: {
       open: false,
       done: false,
@@ -54,12 +101,8 @@ Page({
       tail: '点一下，用一个数字开始',
     },
     scale: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    // 课程只给位置，不给内容：标题与摘要留在六周计划页，避免两处重复
-    planState: { text: '' },
     lastRecord: null,
     careHint: { tone: 'info', text: '' },
-    hasResearch: false,
-    researchHint: '',
     pendingSync: false,
     weeklyRemind: true,
     screenWeek: { due: false, since: null, text: '' },
@@ -88,6 +131,7 @@ Page({
       store.listConsents(),
       store.todayRecord(),
       store.latestScreening(),
+      store.currentVisit(),
     ]).then((res) => {
       const s = res[0];
       const records = res[1] || [];
@@ -95,6 +139,7 @@ Page({
       const consents = res[3] || [];
       const todayRec = res[4];
       const screenResult = res[5];
+      const visitRow = res[6];
 
       const digest = screenResult && screenResult.axis1 ? screen.digest(screenResult) : null;
 
@@ -114,6 +159,7 @@ Page({
         psychDigest: psychDigest,
         pendingSync: local.hasPending(),
         weeklyRemind: local.isWeeklyRemind(),
+        visit: visitView(visitRow),
         screenWeek: {
           due: weekDue,
           since: since,
@@ -251,7 +297,7 @@ Page({
       confirmText: '看该做什么',
       cancelText: '先不用',
       success: (res) => {
-        if (res.confirm) wx.navigateTo({ url: '/pages/anxin/anxin?topic=flare' });
+        if (res.confirm) wx.switchTab({ url: '/pages/care/care' });
       },
     });
   },
@@ -281,30 +327,10 @@ Page({
     progress.forEach((p) => {
       if (p.review_done) done[p.week] = true;
     });
-    let nextWeek = null;
-    for (let i = 0; i < course.WEEKS.length; i += 1) {
-      if (!done[course.WEEKS[i].week]) {
-        nextWeek = course.WEEKS[i];
-        break;
-      }
-    }
-    const started = progress.length > 0;
-
-    const aLine = consents.filter((c) => c.track === 'A' && c.consented)[0];
-    const hasResearch = !!aLine;
-
-    const planState = !nextWeek
-      ? { text: '六周已完成' }
-      : started
-        ? { text: '进行到第 ' + nextWeek.week + ' 周' }
-        : { text: '还没开始' };
 
     this.setData({
-      planState: planState,
       lastRecord: lastRecord,
       careHint: triage.careHint(records),
-      hasResearch: hasResearch,
-      researchHint: hasResearch ? 'A 线研究任务与回访安排' : '',
     });
   },
 
@@ -355,19 +381,63 @@ Page({
   },
 
   goPlan() {
-    wx.switchTab({ url: '/pages/plan/plan' });
+    wx.showToast({ title: '六周计划已下线', icon: 'none' });
   },
 
   goTriage() {
     wx.navigateTo({ url: '/pages/triage/triage?mode=visit' });
   },
 
-  goAnxin() {
-    wx.navigateTo({ url: '/pages/anxin/anxin' });
+  /* ---------- 本次就诊 ---------- */
+
+  // 没有就诊时点一下：建一条。真实场景由诊所二维码带参，演示时直接生成。
+  bindVisit() {
+    const self = this;
+    if (!this.data.signedIn) {
+      wx.showModal({
+        title: '先登录',
+        content: '登录后这次的填写才能和就诊记录对上，医师在诊室里才看得到。',
+        confirmText: '去登录',
+        success(res) {
+          if (res.confirm) self.goLogin();
+        },
+      });
+      return;
+    }
+    wx.showLoading({ title: '正在建立…' });
+    store
+      .createVisit({ visit_no: newVisitNo(), status: 'waiting_self_report', source: 'manual' })
+      .then(function (row) {
+        wx.hideLoading();
+        if (!row) throw new Error('未返回就诊记录');
+        self.setData({ visit: visitView(row) });
+        wx.showToast({ title: '已绑定本次就诊', icon: 'none' });
+      })
+      .catch(function (err) {
+        wx.hideLoading();
+        wx.showToast({ title: (err && err.message) || '建立失败', icon: 'none' });
+      });
   },
 
-  goResearch() {
-    wx.navigateTo({ url: '/pages/research/research' });
+  onVisitCard() {
+    if (!this.data.visit.has) {
+      this.bindVisit();
+      return;
+    }
+    if (this.data.visit.statusText === '待自评') {
+      wx.navigateTo({ url: '/pages/psych/psych' });
+      return;
+    }
+    this.goReport();
+  },
+
+  goReport() {
+    const id = this.data.visit.id;
+    wx.navigateTo({ url: id ? '/pages/report/report?visit=' + id : '/pages/report/report' });
+  },
+
+  goDesk() {
+    wx.navigateTo({ url: '/pages/desk/desk' });
   },
 
   goProfile() {

@@ -18,7 +18,7 @@ try {
     wx: createDiagnosticWx(wx),
   });
 } catch (err) {
-  console.error('[颞安智护] createMiniProgramWorkBuddyCloud failed', err);
+  console.error('[颌心] createMiniProgramWorkBuddyCloud failed', err);
 }
 
 module.exports = { cloud, publicConfig };

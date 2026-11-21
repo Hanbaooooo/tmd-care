@@ -99,7 +99,7 @@
       <view class="plan-k">六周</view>
       <view class="plan-v">{{plan.weeks}}</view>
     </view>
-    <view class="btn-primary mt20" bindtap="goPlan" hover-class="is-active" hover-stay-time="80">开始六周计划</view>
+    <view class="btn-primary mt20" bindtap="goReport" hover-class="is-active" hover-stay-time="80">看这次的双轴报告</view>
     <view class="btn-ghost mt16" bindtap="goRecord" hover-class="is-active" hover-stay-time="80">先记一次今天的症状</view>
   </view>
 

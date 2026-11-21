@@ -304,7 +304,7 @@ Page({
           setTimeout(() => wx.navigateBack(), 500);
         })
         .catch((err) => {
-          console.warn('[颞安智护] scale save failed', err && err.message);
+          console.warn('[颌心] scale save failed', err && err.message);
           this.setData({ saving: false, errorMsg: '没交上去，可能是网络问题。答案还在这一页。' });
         });
     });

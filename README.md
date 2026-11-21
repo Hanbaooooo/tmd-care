@@ -1,6 +1,11 @@
-# 颞安智护
+# 颌·心
 
-颞下颌关节紊乱（TMD）患者的自我管理与随访小程序。患者端做筛查、六周课程、症状记录、就医准备；研究端做知情同意与 T0/T1 量表采集。
+面向口腔修复、正畸及颞下颌关节相关门诊**初诊患者**的 DC/TMD 双轴智能分诊与随访系统。
+
+候诊阶段采集 Axis II 自评（OBC-21 / GAD-7 / PHQ-4 / JFLS-8 / NRS / DC/TMD SQ），医师面诊时结构化录入 Axis I 体征并签核，自动生成一页式双轴报告。
+
+> **风险分层只代表病例复核优先级，不等同于患病概率。** 本系统不替代医师诊断。
+> 患者端只展示医师签核定稿版本。
 
 ---
 
@@ -71,10 +76,12 @@ git clone https://github.com/Hanbaooooo/tmd-care.git
 ```
 app.js / app.json / app.wxss   入口、路由与 tabBar、全局设计令牌
 components/nav-bar/            自定义导航条（custom 导航 + backdrop-filter 磨砂）
-components/bg-layer/           固定视口底纹（颗粒 + 三层径向光 + 竖向渐变）
-data/                          纯数据与算法：量表题库、筛查逻辑、课程、知识库
-pages/                         16 个页面
-utils/                         云服务封装、本地存储、依赖周次计算等
+components/bg-layer/           固定视口底纹（单色 + 96rpx 平铺颗粒）
+data/                          纯数据与算法：Axis I 定义、判定规则、量表、筛查、知识库
+pages/                         14 个页面
+styles/                        报告页与医师工作台共用版式
+utils/                         云服务封装、本地存储、报告展示逻辑
+_offline/                      已下线页面（不注册、不打包；代码保留，可随时回滚）
 images/                        静态图
 ```
 
@@ -84,10 +91,57 @@ images/                        静态图
 |---|---|
 | `app.wxss` | 全局设计令牌（颜色、线条、圆角）都在这里。**改颜色只改这里**，不要在页面里写死色值 |
 | `components/bg-layer` | 背景是 `position: fixed` 铺满视口的独立层，**只放 96rpx 平铺颗粒，不放任何随高度变化的渐变**。全站底色只有 `#F6FBF9` 一个值，必须与 `app.json` 的 `window.backgroundColor`、`tabBar.backgroundColor` 完全一致。任何一处不一致，页面盒子边缘就会露出一条色带（真机上的"分层"） |
-| `data/scales.js` | 研究端量表（含版本档案与分级阈值） |
-| `data/psych.js` | 患者端心理与行为评估（GAD-7 / PHQ-4 / OBC / JFLS-8） |
-| `data/course.js` | 六周课程内容与文案 |
+| `data/axis1.js` | DC/TMD **Axis I** 结构化体征定义（医师面诊录入）。字段 key 一旦上线不要改名，旧记录存的就是 key |
+| `data/rules.js` | **四类复核状态只在这里判**。阈值集中在 `THRESHOLDS`，报告上的说明文字会跟着变。改判定先改这里，不要在页面里写 if |
+| `data/scales.js` | 量表题库与版本档案（OBC 12 项 / 21 项） |
+| `data/psych.js` | **Axis II** 患者自评（GAD-7 / PHQ-4 / OBC-21 / JFLS-8） |
+| `utils/report-view.js` | 报告页与工作台共用的展示逻辑（分数行、色调、时间格式）。两处渲染同一份数据，规则只写一遍 |
 | `utils/store.js` | 云端读写（Supabase 风格的托管库）。**所有数据访问都从这里走**，页面里不要直接调 |
+
+---
+
+## 双轴报告与签核
+
+### 一次就诊的生命周期
+
+```
+候诊绑定就诊（tmd_visits，status=waiting_self_report）
+   → 患者填 Axis II（psych 页）→ 落一份报告，status=submitted
+   → 医师在工作台录 Axis I → 报告状态实时重算
+   → 签核（status=signed）→ 患者端可见
+   → 撤回（status=withdrawn）→ 患者端立刻不可见
+```
+
+### 四类状态的含义
+
+状态说的是**医师下一步该做什么**，不是病情轻重：
+
+| 状态 | key | 含义 |
+|---|---|---|
+| 优先人工复核 | `priority` | 命中风险信号，这个病例先看 |
+| 需补充评估 | `need_more` | 有缺项或前后不一致，先补再判 |
+| 待补录 | `pending_input` | Axis I 还没录，报告不成立 |
+| 常规记录 | `routine` | 没命中任何信号 |
+
+**「优先人工复核」只表示复核先后，不代表患病概率。** 这句话在 welcome、报告页、本文件三处都出现，改文案时不要删。
+
+### 可溯源怎么保证
+
+每条命中都带 `ruleId / ruleVersion / threshold / sourceItems`，报告上点开一条就能看到「哪张量表、哪个字段、卡在什么阈值」。要加规则就在 `data/rules.js` 里 `push` 一条，别在页面里拼字符串。
+
+### 患者端为什么不会看到医师的草稿
+
+签核时把当下这一版整体冻结进 `tmd_reports.patient_snapshot`。患者端读的是快照，不是正文。之后医师再改正文，患者端不变；撤回时快照清空，患者端立刻看不到。
+
+### 一个必须说清的边界
+
+数据库 RLS 是 `owner_id = auth.uid()`，也就是**只能读写自己的行**。所以医师工作台目前是**本机账号演示模式**：只列出用当前账号提交的评估，界面上也如实标注了这句。要变成真正的「全科室队列」，需要：
+
+1. 新增 `tmd_staff`（科室成员表）与 `tmd_visits.clinic_id`
+2. RLS 改成 `owner_id = auth.uid() OR clinic_id IN (SELECT clinic_id FROM tmd_staff WHERE user_id = auth.uid())`
+3. 报告页同步加同样的读权限
+
+在没有这三步之前，不要在对外材料里说「已支持多医师协作」。
 
 ---
 
@@ -152,6 +206,8 @@ OBC（口腔行为清单）从 12 项简版换成了 21 项完整版，**两套�
 
 ## 已知待办
 
-- [ ] 换真实 AppID（当前 `touristappid`）
-- [ ] 研究端 OBC 与患者端口径已统一为 21 项，历史 12 项数据仅在分析时按版本分层，不迁移
+- [x] 换真实 AppID（当前 `wx16d875b790f73435`，只存在于本机 `project.config.json`，靠 `skip-worktree` 挡在 git 之外）
+- [ ] 医师工作台接入科室账号（见上文「一个必须说清的边界」三步）
+- [ ] 诊所二维码带参建就诊：现在是首页手动生成 `V20261121-0001` 形式的就诊号，真实场景应由诊所码带 `clinic` 与 `visit_no`
 - [ ] 心理评估结果目前只存本地，未做跨设备同步
+- [ ] `_offline/` 里的六周课程、A 线研究、安心问答已从界面移除；若要恢复，把目录移回 `pages/` 并在 `app.json` 重新注册即可

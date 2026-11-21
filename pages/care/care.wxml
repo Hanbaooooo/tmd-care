@@ -47,29 +47,11 @@
   </view>
 
   <view class="section rise-3">
-    <view class="h2 small">还想问点什么</view>
-    <view class="entry-line" bindtap="goAnxin" hover-class="pressed">
+    <view class="h2 small">这次的双轴报告</view>
+    <view class="entry-line" bindtap="goReport" hover-class="pressed">
       <view>
-        <view class="entry-title">安心</view>
-        <view class="tiny">问一句，回答只来自审核过的内容</view>
-      </view>
-      <text class="entry-arrow">›</text>
-    </view>
-    <view class="entry-line" bindtap="goPlan" hover-class="pressed">
-      <view>
-        <view class="entry-title">六周计划</view>
-        <view class="tiny">从自我管理开始，不必先弄清全部医学名词</view>
-      </view>
-      <text class="entry-arrow">›</text>
-    </view>
-  </view>
-
-  <view wx:if="{{hasResearch}}" class="section rise-3">
-    <view class="h2 small">研究</view>
-    <view class="entry-line" bindtap="goResearch" hover-class="pressed">
-      <view>
-        <view class="entry-title">我的研究任务</view>
-        <view class="tiny">哪天该来、还有什么没填</view>
+        <view class="entry-title">评估报告</view>
+        <view class="tiny">{{hasVisit ? '医师签核后为定稿，患者端只显示签核版' : '先绑定本次就诊，才有这次报告'}}</view>
       </view>
       <text class="entry-arrow">›</text>
     </view>
@@ -83,6 +65,16 @@
       <view class="para last">研究编号和你的联系方式分开存。研究人员只能看到你授权的那部分。</view>
       <view wx:if="{{signedIn}}" class="btn-text mt16" bindtap="logout">退出登录</view>
       <view wx:else class="btn-text mt16" bindtap="goLogin">登录后同步到账户 ›</view>
+    </view>
+  </view>
+  <view class="section rise-4">
+    <view class="h2 small">医师入口</view>
+    <view class="entry-line" bindtap="goDesk" hover-class="pressed">
+      <view>
+        <view class="entry-title">医师工作台</view>
+        <view class="tiny">录 Axis I 体征、核对提示、签核定稿</view>
+      </view>
+      <text class="entry-arrow">›</text>
     </view>
   </view>
   <view class="tab-fade"></view>

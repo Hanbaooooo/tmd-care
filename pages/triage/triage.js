@@ -209,7 +209,7 @@ Page({
       })
       .catch((err) => {
         this.setData({ saving: false });
-        console.warn('[颞安智护] triage save failed', err && err.message);
+        console.warn('[颌心] triage save failed', err && err.message);
         wx.showModal({
           title: '尚未同步',
           content: '这份没存到云端，可能还没登录。可以先看摘要，登录后再存。',
@@ -222,7 +222,7 @@ Page({
       });
   },
 
-  goPlan() {
-    wx.switchTab({ url: '/pages/plan/plan' });
+  goReport() {
+    wx.navigateTo({ url: '/pages/report/report' });
   },
 });

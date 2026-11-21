@@ -1,0 +1,58 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+
+  <view class="h1">医师工作台</view>
+  <view class="muted intro">面诊时在这里录 Axis I 体征，核对系统给的复核提示，然后签核。</view>
+
+  <view class="mode-note">
+    <view class="mode-k">当前范围</view>
+    <view class="mode-v">本机账号演示模式：只列出用这个账号提交的评估。接入科室账号后才会显示全科室队列。</view>
+  </view>
+
+  <view class="tabs">
+    <view
+      class="tab {{filter === item.key ? 'on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      bindtap="pickFilter"
+      data-key="{{item.key}}"
+    >
+      {{item.label}}<text class="tab-num">{{item.count}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">正在读取…</view>
+
+  <view wx:elif="{{!rows.length}}" class="empty">
+    <view>这里还没有待处理的评估。</view>
+    <view class="mt12">患者用同一个账号完成自评并提交后，会出现在这里。</view>
+  </view>
+
+  <view wx:else>
+    <view
+      class="q-row"
+      wx:for="{{rows}}"
+      wx:key="id"
+      bindtap="openDetail"
+      data-id="{{item.id}}"
+      hover-class="tap-dim"
+      hover-stay-time="60"
+    >
+      <view class="q-top">
+        <text class="q-no num">{{item.visitNo}}</text>
+        <text class="q-badge {{item.tone}}">{{item.stateLabel}}</text>
+      </view>
+      <view class="q-mid">
+        <text class="q-hits">{{item.hitText}}</text>
+        <text class="q-arrow">›</text>
+      </view>
+      <view class="q-foot">
+        <text class="q-time">{{item.timeText}}</text>
+        <text wx:if="{{item.signed}}" class="q-signed">已签核</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot-space"></view>
+</view>

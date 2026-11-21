@@ -74,7 +74,7 @@ Page({
         return merged;
       })
       .catch((err) => {
-        console.warn('[颞安智护] progress save failed', err && err.message);
+        console.warn('[颌心] progress save failed', err && err.message);
         wx.showModal({
           title: '尚未同步',
           content: '没存上，可能是网络。你写的内容还在这一页。',

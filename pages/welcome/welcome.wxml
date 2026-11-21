@@ -5,32 +5,32 @@
 
   <view class="top">
     <view class="mark">
-      <view class="mark-badge">颞</view>
+      <view class="mark-badge">颌</view>
       <view class="mark-text">
-        <text class="mark-name">颞安智护</text>
-        <text class="mark-en">TMD SELF-MANAGEMENT</text>
+        <text class="mark-name">颌·心</text>
+        <text class="mark-en">DC/TMD DUAL-AXIS</text>
       </view>
     </view>
 
-    <view class="eyebrow">下颌不适 · 自我管理</view>
-    <view class="title title-first">先弄清楚</view>
-    <view class="title">现在该做什么</view>
-    <view class="lede">不用先懂医学名词，也不用自己判断严不严重。</view>
+    <view class="eyebrow">下颌不适 · 就诊前评估</view>
+    <view class="title title-first">候诊这几分钟</view>
+    <view class="title">把症状说清楚</view>
+    <view class="lede">不用先懂医学名词，按实际情况答就行。答案会整理成一页，医师面诊时看。</view>
 
     <view class="rhythm">
-      <text class="rhythm-item">01 说感受</text>
+      <text class="rhythm-item">01 说症状</text>
       <text class="rhythm-sep">/</text>
-      <text class="rhythm-item">02 看结果</text>
+      <text class="rhythm-item">02 双轴评估</text>
       <text class="rhythm-sep">/</text>
-      <text class="rhythm-item">03 做一件事</text>
+      <text class="rhythm-item">03 医师签核</text>
     </view>
   </view>
 
   <block wx:if="{{ready}}">
     <view class="panel">
-      <view class="panel-head">继续使用</view>
+      <view class="panel-head">开始这次评估</view>
       <view class="panel-note">
-        记录默认存在这台手机上。登录就为两件事：换手机别丢，研究回访时对上你的编号。
+        登录后，这次的填写才能和你的就诊记录对上，医师在诊室里打开就看得到。不登录也能填，但只存在这台手机上。
       </view>
 
       <view wx:if="{{pendingText}}" class="pending">{{pendingText}}</view>
@@ -107,6 +107,8 @@
   <view wx:else class="preparing">正在准备…</view>
 
   <view class="foot">
-    用于健康筛查、自我管理与研究回访，不替代医生诊断。
+    <view>只做评估与就诊参考，不替代医师诊断。</view>
+    <view>报告上的优先级只表示医师复核的先后，不代表患病概率。</view>
+    <view>患者看到的内容，以医师签核定稿为准。</view>
   </view>
 </view>

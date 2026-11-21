@@ -176,7 +176,7 @@ Page({
             if (r.confirm) wx.navigateTo({ url: '/pages/login/login?from=research' });
           },
         });
-        console.warn('[颞安智护] consent failed', err && err.message);
+        console.warn('[颌心] consent failed', err && err.message);
       });
   },
 

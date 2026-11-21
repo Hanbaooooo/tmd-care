@@ -68,7 +68,7 @@ function saveRecord(payload) {
         return { synced: true, row: data && data[0] ? data[0] : row };
       })
       .catch(function (err) {
-        console.warn('[颞安智护] record cloud save failed', err && err.message);
+        console.warn('[颌心] record cloud save failed', err && err.message);
         return { synced: false, row: row };
       });
   });
@@ -109,7 +109,7 @@ function listRecords(limit) {
         return local.listRecords(limit || 30);
       })
       .catch(function (err) {
-        console.warn('[颞安智护] listRecords failed', err && err.message);
+        console.warn('[颌心] listRecords failed', err && err.message);
         return local.listRecords(limit || 30);
       });
   });
@@ -161,7 +161,7 @@ function saveScreening(result) {
         return { synced: true };
       })
       .catch(function (err) {
-        console.warn('[颞安智护] screening cloud save failed', err && err.message);
+        console.warn('[颌心] screening cloud save failed', err && err.message);
         return { synced: false };
       });
   });
@@ -497,6 +497,276 @@ function syncPending() {
   });
 }
 
+/* ---------------- 就诊 ---------------- */
+
+// 一次就诊 = 一条 tmd_visits。候诊扫码进来先建这条，之后的填写都挂在它下面。
+// 没有 visit，"同次签核"和"复评锚定初诊"在系统里就不存在。
+function createVisit(payload) {
+  return signedIn().then(function (ok) {
+    if (!ok) throw new Error('创建就诊记录需要先登录账户');
+    return Promise.resolve()
+      .then(function () {
+        return db()
+          .from('tmd_visits')
+          .insert({
+            visit_no: payload.visit_no,
+            clinic: payload.clinic || null,
+            doctor_name: payload.doctor_name || null,
+            visit_date: payload.visit_date || today(),
+            status: payload.status || 'waiting_self_report',
+            source: payload.source || 'scan',
+          })
+          .select();
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows && rows[0] ? rows[0] : null;
+      });
+  });
+}
+
+function listVisits(limit) {
+  return signedIn().then(function (ok) {
+    if (!ok) return [];
+    return Promise.resolve()
+      .then(function () {
+        return db()
+          .from('tmd_visits')
+          .select('*')
+          .order('visit_date', { ascending: false })
+          .limit(limit || 20);
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows || [];
+      })
+      .catch(function () {
+        return [];
+      });
+  });
+}
+
+// 今天最近一次就诊：首页「本次就诊」卡读这条
+function currentVisit() {
+  return signedIn().then(function (ok) {
+    if (!ok) return null;
+    return Promise.resolve()
+      .then(function () {
+        return db()
+          .from('tmd_visits')
+          .select('*')
+          .eq('visit_date', today())
+          .order('created_at', { ascending: false })
+          .limit(1);
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows && rows.length ? rows[0] : null;
+      })
+      .catch(function () {
+        return null;
+      });
+  });
+}
+
+function getVisit(id) {
+  if (!id) return Promise.resolve(null);
+  return signedIn().then(function (ok) {
+    if (!ok) return null;
+    return Promise.resolve()
+      .then(function () {
+        return db().from('tmd_visits').select('*').eq('id', id).maybeSingle();
+      })
+      .then(check)
+      .catch(function () {
+        return null;
+      });
+  });
+}
+
+function updateVisitStatus(id, status) {
+  if (!id) return Promise.resolve(false);
+  return signedIn().then(function (ok) {
+    if (!ok) return false;
+    return Promise.resolve()
+      .then(function () {
+        return db().from('tmd_visits').update({ status: status }).eq('id', id);
+      })
+      .then(check)
+      .then(function () {
+        return true;
+      })
+      .catch(function () {
+        return false;
+      });
+  });
+}
+
+/* ---------------- 一页式报告 ---------------- */
+
+// 一个就诊对应一份报告。已有就改，没有就建 —— 靠 visit_id 查一次决定。
+function saveReport(payload) {
+  return signedIn().then(function (ok) {
+    if (!ok) throw new Error('报告需要先登录账户才能保存');
+    const row = {
+      visit_id: payload.visit_id || null,
+      visit_no: payload.visit_no || null,
+      axis2: payload.axis2 || null,
+      axis1: payload.axis1 || null,
+      rule_state: payload.rule_state || null,
+      rule_hits: payload.rule_hits || [],
+      rule_version: payload.rule_version || null,
+      doctor_action: payload.doctor_action || null,
+      doctor_note: payload.doctor_note || null,
+      follow_up: payload.follow_up || null,
+      updated_at: new Date().toISOString(),
+    };
+    return getReport(payload.visit_id).then(function (existing) {
+      if (existing && existing.id) {
+        // 已签核的报告不再回写正文，只允许走 signReport / withdrawReport
+        if (existing.status === 'signed') return existing;
+        return Promise.resolve()
+          .then(function () {
+            return db().from('tmd_reports').update(row).eq('id', existing.id).select();
+          })
+          .then(check)
+          .then(function (rows) {
+            return rows && rows[0] ? rows[0] : existing;
+          });
+      }
+      return Promise.resolve()
+        .then(function () {
+          return db().from('tmd_reports').insert(row).select();
+        })
+        .then(check)
+        .then(function (rows) {
+          return rows && rows[0] ? rows[0] : null;
+        });
+    });
+  });
+}
+
+function getReport(visitId) {
+  if (!visitId) return Promise.resolve(null);
+  return signedIn().then(function (ok) {
+    if (!ok) return null;
+    return Promise.resolve()
+      .then(function () {
+        return db().from('tmd_reports').select('*').eq('visit_id', visitId).maybeSingle();
+      })
+      .then(check)
+      .catch(function () {
+        return null;
+      });
+  });
+}
+
+function getReportById(id) {
+  if (!id) return Promise.resolve(null);
+  return signedIn().then(function (ok) {
+    if (!ok) return null;
+    return Promise.resolve()
+      .then(function () {
+        return db().from('tmd_reports').select('*').eq('id', id).maybeSingle();
+      })
+      .then(check)
+      .catch(function () {
+        return null;
+      });
+  });
+}
+
+// 医师工作台列表。status 传空则全部
+function listReports(status) {
+  return signedIn().then(function (ok) {
+    if (!ok) return [];
+    return Promise.resolve()
+      .then(function () {
+        let q = db().from('tmd_reports').select('*').order('updated_at', { ascending: false });
+        if (status) q = q.eq('status', status);
+        return q.limit(50);
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows || [];
+      })
+      .catch(function () {
+        return [];
+      });
+  });
+}
+
+// 签核：把当下这一版冻结进 patient_snapshot。
+// 之后医师再改正文，患者端读到的仍是这份快照 —— 除非重新签核。
+function signReport(id, payload) {
+  const now = new Date().toISOString();
+  const snapshot = {
+    axis1: payload.axis1 || null,
+    axis2: payload.axis2 || null,
+    rule_state: payload.rule_state || null,
+    rule_hits: payload.rule_hits || [],
+    rule_version: payload.rule_version || null,
+    doctor_note: payload.doctor_note || '',
+    doctor_action: payload.doctor_action || 'adopt',
+    follow_up: payload.follow_up || null,
+    signed_by: payload.doctor_name || '',
+    signed_at: now,
+  };
+  return signedIn().then(function (ok) {
+    if (!ok) throw new Error('签核需要先登录账户');
+    return Promise.resolve()
+      .then(function () {
+        return db()
+          .from('tmd_reports')
+          .update({
+            axis1: payload.axis1 || null,
+            rule_state: payload.rule_state || null,
+            rule_hits: payload.rule_hits || [],
+            doctor_action: snapshot.doctor_action,
+            doctor_note: snapshot.doctor_note,
+            follow_up: snapshot.follow_up,
+            signed_by: snapshot.signed_by,
+            signed_at: now,
+            patient_snapshot: snapshot,
+            status: 'signed',
+            updated_at: now,
+          })
+          .eq('id', id)
+          .select();
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows && rows[0] ? rows[0] : null;
+      });
+  });
+}
+
+// 撤回：患者端立刻看不到已签核内容
+function withdrawReport(id, note) {
+  const now = new Date().toISOString();
+  return signedIn().then(function (ok) {
+    if (!ok) throw new Error('撤回需要先登录账户');
+    return Promise.resolve()
+      .then(function () {
+        return db()
+          .from('tmd_reports')
+          .update({
+            status: 'withdrawn',
+            doctor_note: note || null,
+            patient_snapshot: null,
+            signed_at: null,
+            updated_at: now,
+          })
+          .eq('id', id)
+          .select();
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows && rows[0] ? rows[0] : null;
+      });
+  });
+}
+
 module.exports = {
   today,
   saveRecord,
@@ -517,4 +787,15 @@ module.exports = {
   saveScaleResult,
   listScaleResults,
   syncPending,
+  createVisit,
+  listVisits,
+  currentVisit,
+  getVisit,
+  updateVisitStatus,
+  saveReport,
+  getReport,
+  getReportById,
+  listReports,
+  signReport,
+  withdrawReport,
 };

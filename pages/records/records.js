@@ -24,7 +24,7 @@ Page({
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 2 });
+      this.getTabBar().setData({ selected: 1 });
     }
     this.refresh();
   },
@@ -103,8 +103,8 @@ Page({
     wx.navigateTo({ url: '/pages/login/login?from=records' });
   },
 
-  goPlan() {
-    wx.switchTab({ url: '/pages/plan/plan' });
+  goReport() {
+    wx.navigateTo({ url: '/pages/report/report' });
   },
 });
 

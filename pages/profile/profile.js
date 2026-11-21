@@ -142,8 +142,8 @@ Page({
     });
   },
 
-  goPlan() {
-    wx.switchTab({ url: '/pages/plan/plan' });
+  goReport() {
+    wx.navigateTo({ url: '/pages/report/report' });
   },
 
   goRecord() {

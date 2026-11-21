@@ -1,0 +1,206 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+
+  <view wx:if="{{loading}}" class="empty">正在读取…</view>
+
+  <view wx:elif="{{!hasReport}}" class="empty">
+    <view>这份报告不存在或没有权限。</view>
+  </view>
+
+  <block wx:else>
+    <view class="h1">复核 · {{visitNo}}</view>
+    <view class="muted intro">
+      {{clinic || '未填科室'}} · {{visitDate}} · 规则版本 {{ruleVersion}}
+    </view>
+
+    <view wx:if="{{signed}}" class="note-info mb16">
+      这份已经签核（{{signedBy}} · {{signedAtText}}）。正文已冻结进患者端快照，要改先撤回。
+    </view>
+
+    <!-- 实时状态：改一个字段就重算 -->
+    <view class="state state-{{state.key}}">
+      <view class="state-row">
+        <text class="state-label">{{state.label}}</text>
+        <text class="state-tag">实时重算</text>
+      </view>
+      <view class="state-action">{{state.action}}</view>
+    </view>
+
+    <!-- 系统提示 -->
+    <view class="section">
+      <view class="h2 small">系统提示 · {{hits.length}} 条</view>
+      <view class="tiny mb12">每条都指回具体字段和阈值，采纳或驳回由你决定。</view>
+
+      <view
+        class="hit"
+        wx:for="{{hits}}"
+        wx:key="ruleId"
+        bindtap="toggleHit"
+        data-i="{{index}}"
+        hover-class="tap-dim"
+        hover-stay-time="60"
+      >
+        <view class="hit-top">
+          <view class="hit-dot {{item.level}}"></view>
+          <text class="hit-title">{{item.title}}</text>
+          <text class="hit-arrow">{{item.open ? '−' : '+'}}</text>
+        </view>
+        <view class="hit-detail">{{item.detail}}</view>
+        <view wx:if="{{item.open}}" class="hit-basis">
+          <view class="basis-row">
+            <text class="basis-k">规则</text>
+            <text class="basis-v num">{{item.ruleId}} · {{item.ruleVersion}}</text>
+          </view>
+          <view class="basis-row">
+            <text class="basis-k">阈值</text>
+            <text class="basis-v">{{item.threshold}}</text>
+          </view>
+          <view class="basis-row">
+            <text class="basis-k">来源</text>
+            <text class="basis-v">{{item.sourceText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{!hits.length}}" class="tiny">未命中风险信号。</view>
+    </view>
+
+    <!-- Axis II -->
+    <view class="section">
+      <view class="h2 small">Axis II · 患者自评</view>
+      <view class="ax2" wx:for="{{axis2Rows}}" wx:key="key">
+        <view class="ax2-top">
+          <text class="ax2-name">{{item.name}}</text>
+          <text class="ax2-score num">{{item.display}}</text>
+        </view>
+        <view class="ax2-band {{item.tone}}">{{item.band}}</view>
+      </view>
+      <view wx:if="{{!axis2Rows.length}}" class="tiny">这次没有自评记录。</view>
+    </view>
+
+    <!-- Axis I 录入 -->
+    <view class="section">
+      <view class="h2 small">Axis I · 体征录入</view>
+      <view class="tiny mb16">标「必填」的漏了，报告状态会停在待补录。</view>
+
+      <view class="group" wx:for="{{sections}}" wx:key="key" wx:for-item="sec">
+        <view class="group-head">
+          <text class="group-title">{{sec.title}}</text>
+          <text wx:if="{{sec.hint}}" class="group-hint">{{sec.hint}}</text>
+        </view>
+
+        <view class="field" wx:for="{{sec.items}}" wx:key="key" wx:for-item="f">
+          <view class="field-label">
+            {{f.label}}
+            <text wx:if="{{f.required}}" class="req">必填</text>
+            <text wx:if="{{f.unit}}" class="unit">{{f.unit}}</text>
+          </view>
+
+          <!-- 多选部位 -->
+          <block wx:if="{{f.type === 'sites'}}">
+            <view class="chips">
+              <view
+                class="chip {{siteChecked[o.key] ? 'on' : ''}}"
+                wx:for="{{f.options}}"
+                wx:key="key"
+                wx:for-item="o"
+                bindtap="toggleSite"
+                data-key="{{o.key}}"
+                hover-class="chip-press"
+                hover-stay-time="60"
+              >{{o.label}}</view>
+            </view>
+            <view wx:if="{{f.hint}}" class="tiny mt6">{{f.hint}}</view>
+          </block>
+
+          <!-- 单选 -->
+          <block wx:elif="{{f.type === 'single'}}">
+            <view class="opts">
+              <view
+                class="opt {{form[f.key] === o.v ? 'on' : ''}}"
+                wx:for="{{f.options}}"
+                wx:key="v"
+                wx:for-item="o"
+                bindtap="pickSingle"
+                data-key="{{f.key}}"
+                data-v="{{o.v}}"
+                hover-class="chip-press"
+                hover-stay-time="60"
+              >{{o.l}}</view>
+            </view>
+          </block>
+
+          <!-- 数字 -->
+          <block wx:elif="{{f.type === 'number'}}">
+            <input
+              class="num-input"
+              type="digit"
+              value="{{form[f.key]}}"
+              placeholder="{{f.min}}–{{f.max}}"
+              disabled="{{signed}}"
+              data-key="{{f.key}}"
+              bindinput="onNumber"
+            />
+          </block>
+
+          <!-- 文本 -->
+          <block wx:else>
+            <input
+              class="text-input"
+              value="{{form[f.key]}}"
+              placeholder="{{f.placeholder || ''}}"
+              disabled="{{signed}}"
+              data-key="{{f.key}}"
+              bindinput="onText"
+            />
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!-- 医师意见 -->
+    <view class="section">
+      <view class="h2 small">复核意见</view>
+      <view class="field-label">给患者的说明（会出现在报告上）</view>
+      <textarea
+        class="note-input"
+        value="{{doctorNote}}"
+        placeholder="写清楚这次看到什么、下一步做什么。不用重复量表分数。"
+        disabled="{{signed}}"
+        maxlength="500"
+        bindinput="onNote"
+      />
+
+      <view class="field-label mt16">随访安排</view>
+      <input
+        class="text-input"
+        value="{{followUp}}"
+        placeholder="如：4 周后复评 OBC 与 JFLS-8"
+        disabled="{{signed}}"
+        bindinput="onFollow"
+      />
+    </view>
+
+    <!-- 操作 -->
+    <view class="actions">
+      <block wx:if="{{!signed}}">
+        <view class="btn-ghost" bindtap="saveDraft" hover-class="is-active" hover-stay-time="80">
+          {{saving ? '保存中…' : '暂存'}}
+        </view>
+        <view class="btn-primary mt16" bindtap="sign" hover-class="is-active" hover-stay-time="80">
+          {{signing ? '签核中…' : '签核定稿'}}
+        </view>
+        <view class="tiny mt12">签核后患者端才会看到这份报告，正文同时冻结。</view>
+      </block>
+      <block wx:else>
+        <view class="btn-ghost" bindtap="withdraw" hover-class="is-active" hover-stay-time="80">
+          撤回签核
+        </view>
+        <view class="tiny mt12">撤回后患者端立刻看不到内容，需要重新签核才会恢复。</view>
+      </block>
+    </view>
+
+    <view class="foot-space"></view>
+  </block>
+</view>

@@ -98,8 +98,8 @@
         <text class="portrait-act-k">先做这一件</text>
         <text class="portrait-act-v">{{result.portrait.act}}</text>
       </view>
-      <view class="btn-ghost mt24" bindtap="goWeek" hover-class="is-active" hover-stay-time="80">
-        去做第 {{result.portrait.week}} 周 ›
+      <view class="btn-ghost mt24" bindtap="goReport" hover-class="is-active" hover-stay-time="80">
+        看这次的双轴报告 ›
       </view>
     </view>
 

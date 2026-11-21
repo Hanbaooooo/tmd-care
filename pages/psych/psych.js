@@ -1,7 +1,38 @@
 const psych = require('../../data/psych');
 const local = require('../../utils/local');
+const store = require('../../utils/store');
+const rules = require('../../data/rules');
+const scales = require('../../data/scales');
 
 const TOTAL = psych.SECTIONS.length;
+
+// 心理评估结果 → 报告用的 axis2。
+// JFLS-8 记的是 8 项合计（0–80），报告按均分（0–10）展示与判定，这里换算一次。
+function buildAxis2(result) {
+  const map = {};
+  (result.scores || []).forEach(function (s) {
+    map[s.key] = s;
+  });
+  const out = {};
+  if (map.obc) {
+    out.obc = {
+      score: map.obc.value,
+      max: map.obc.max,
+      band: map.obc.band,
+      version: scales.OBC_FULL,
+    };
+  }
+  if (map.gad7) out.gad7 = { score: map.gad7.value, max: 21, band: map.gad7.band };
+  if (map.phq4) out.phq4 = { score: map.phq4.value, max: 12, band: map.phq4.band };
+  if (map.jfls) {
+    out.jfls8 = {
+      score: Number((map.jfls.value / 8).toFixed(1)),
+      max: 10,
+      band: map.jfls.band,
+    };
+  }
+  return out;
+}
 
 function dayText(iso) {
   if (!iso) return '';
@@ -163,6 +194,38 @@ Page({
     local.savePsych(result);
     this.setData({ saving: false, result: result, fromHistory: false, historyLine: '' });
     wx.pageScrollTo({ scrollTop: 0, duration: 0 });
+    this.submitToVisit(result);
+  },
+
+  // 绑定过本次就诊就落一份报告：此刻还没有 Axis I，状态自然是「待补录」
+  submitToVisit(result) {
+    const self = this;
+    store
+      .currentVisit()
+      .then(function (v) {
+        if (!v) return null;
+        const axis2 = buildAxis2(result);
+        const ev = rules.evaluate({ axis2: axis2, axis1: {} });
+        return store
+          .saveReport({
+            visit_id: v.id,
+            visit_no: v.visit_no,
+            axis2: axis2,
+            axis1: {},
+            rule_state: ev.state.key,
+            rule_hits: ev.hits,
+            rule_version: ev.ruleVersion,
+          })
+          .then(function () {
+            return store.updateVisitStatus(v.id, 'submitted');
+          })
+          .then(function () {
+            self.hasReport = true;
+          });
+      })
+      .catch(function (err) {
+        console.warn('[颌心] submit report failed', err && err.message);
+      });
   },
 
   again() {
@@ -179,8 +242,7 @@ Page({
     });
   },
 
-  goWeek() {
-    const week = (this.data.result && this.data.result.portrait && this.data.result.portrait.week) || 1;
-    wx.navigateTo({ url: '/pages/week/week?week=' + week });
+  goReport() {
+    wx.navigateTo({ url: '/pages/report/report' });
   },
 });

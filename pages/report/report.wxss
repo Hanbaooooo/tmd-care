@@ -1,0 +1,2 @@
+/* 报告页专用：共用版式在 styles/report-common.wxss */
+@import "/styles/report-common.wxss";

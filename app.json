@@ -2,7 +2,6 @@
   "pages": [
     "pages/welcome/welcome",
     "pages/home/home",
-    "pages/plan/plan",
     "pages/records/records",
     "pages/care/care",
     "pages/screen/screen",
@@ -10,15 +9,14 @@
     "pages/profile/profile",
     "pages/triage/triage",
     "pages/summary/summary",
-    "pages/week/week",
     "pages/record-edit/record-edit",
-    "pages/anxin/anxin",
-    "pages/research/research",
-    "pages/scale/scale",
-    "pages/login/login"
+    "pages/login/login",
+    "pages/report/report",
+    "pages/desk/desk",
+    "pages/desk-detail/desk-detail"
   ],
   "window": {
-    "navigationBarTitleText": "颞安智护",
+    "navigationBarTitleText": "颌·心",
     "navigationBarBackgroundColor": "#F6FBF9",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F6FBF9",
@@ -34,10 +32,6 @@
       {
         "pagePath": "pages/home/home",
         "text": "首页"
-      },
-      {
-        "pagePath": "pages/plan/plan",
-        "text": "六周计划"
       },
       {
         "pagePath": "pages/records/records",

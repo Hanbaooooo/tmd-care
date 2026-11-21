@@ -188,7 +188,7 @@ Page({
         }, 500);
       })
       .catch((err) => {
-        console.warn('[颞安智护] record save failed', err && err.message);
+        console.warn('[颌心] record save failed', err && err.message);
         this.setData({
           saving: false,
           errorMsg: '没存上。你填的东西还在这一页，再试一次。',
@@ -218,7 +218,7 @@ Page({
       cancelText: '回到记录',
       success: (res) => {
         if (res.confirm) {
-          wx.redirectTo({ url: '/pages/anxin/anxin?topic=flare' });
+          wx.switchTab({ url: '/pages/care/care' });
         } else {
           wx.switchTab({ url: '/pages/records/records' });
         }

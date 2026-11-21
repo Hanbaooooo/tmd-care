@@ -1,0 +1,160 @@
+<bg-layer />
+<view class="page">
+  <nav-bar back="{{true}}" />
+
+  <view wx:if="{{loading}}" class="empty">正在取这次报告…</view>
+
+  <block wx:elif="{{!hasReport}}">
+    <view class="h1">还没有这次报告</view>
+    <view class="muted intro">先完成候诊阶段的自评，医师面诊录入后，这里才会生成一页报告。</view>
+    <view class="btn-primary mt24" bindtap="goAssess" hover-class="is-active" hover-stay-time="80">去做自评</view>
+  </block>
+
+  <block wx:else>
+    <view class="h1">双轴评估报告</view>
+    <view class="muted intro">
+      {{signed ? '这份已经由医师签核定稿。' : '这是你的自评部分，医师还没签核。'}}
+    </view>
+
+    <!-- 主状态：语义是「复核先后」，不是病情轻重 -->
+    <view wx:if="{{state}}" class="state state-{{state.key}}">
+      <view class="state-row">
+        <text class="state-label">{{state.label}}</text>
+        <text class="state-rule">规则 {{ruleVersion}}</text>
+      </view>
+      <view class="state-action">{{state.action}}</view>
+    </view>
+
+    <view wx:if="{{!signed}}" class="note-caution mt16">
+      医师复核完成前，这页不算定稿。你自己先看没问题，但对外出示时请用签核后的版本。
+    </view>
+
+    <!-- 1 就诊信息与完成度 -->
+    <view class="section">
+      <view class="h2 small">就诊信息</view>
+      <view class="kv">
+        <view class="kv-row">
+          <text class="k">就诊号</text>
+          <text class="v num">{{visitNo || '—'}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="k">科室</text>
+          <text class="v">{{clinic || '—'}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="k">就诊日期</text>
+          <text class="v num">{{visitDate || '—'}}</text>
+        </view>
+        <view class="kv-row">
+          <text class="k">接诊医师</text>
+          <text class="v">{{doctorName || '—'}}</text>
+        </view>
+      </view>
+
+      <view class="prog">
+        <view class="prog-head">
+          <text class="prog-label">评估完成度</text>
+          <text class="prog-num num">{{completion}}%</text>
+        </view>
+        <view class="prog-track">
+          <view class="prog-fill" style="width:{{completion}}%"></view>
+        </view>
+        <view wx:if="{{missingText}}" class="tiny mt8">还差：{{missingText}}</view>
+      </view>
+    </view>
+
+    <!-- 2 Axis I -->
+    <view class="section">
+      <view class="h2 small">Axis I · 临床体征</view>
+      <view wx:if="{{axis1Lines.length}}" class="ax1">
+        <view class="ax1-line" wx:for="{{axis1Lines}}" wx:key="key">
+          <view class="ax1-dot {{item.level}}"></view>
+          <text class="ax1-text">{{item.text}}</text>
+        </view>
+      </view>
+      <view wx:elif="{{axis1Done}}" class="tiny">已录入，未见明显阳性体征。</view>
+      <view wx:else class="tiny">医师面诊时录入。这一栏空着，报告就还没成立。</view>
+
+      <view wx:if="{{axis1Note}}" class="ax1-note">{{axis1Note}}</view>
+    </view>
+
+    <!-- 3 Axis II -->
+    <view class="section">
+      <view class="h2 small">Axis II · 自评</view>
+      <view class="ax2" wx:for="{{axis2Rows}}" wx:key="key">
+        <view class="ax2-top">
+          <text class="ax2-name">{{item.name}}</text>
+          <text class="ax2-score num">{{item.display}}</text>
+        </view>
+        <view class="ax2-bar">
+          <view class="ax2-fill {{item.tone}}" style="width:{{item.percent}}%"></view>
+        </view>
+        <view class="ax2-band {{item.tone}}">{{item.band}}</view>
+      </view>
+      <view wx:if="{{!axis2Rows.length}}" class="tiny">这次没有完整的自评记录。</view>
+    </view>
+
+    <!-- 4 判定依据：每条都能点开看溯源 -->
+    <view class="section">
+      <view class="h2 small">判定依据</view>
+      <view class="tiny mb12">点开一条，能看到是哪张量表、哪个字段、卡在什么阈值。</view>
+
+      <view
+        class="hit hit-{{item.level}}"
+        wx:for="{{hits}}"
+        wx:key="ruleId"
+        bindtap="toggleHit"
+        data-i="{{index}}"
+        hover-class="tap-dim"
+        hover-stay-time="60"
+      >
+        <view class="hit-top">
+          <view class="hit-dot {{item.level}}"></view>
+          <text class="hit-title">{{item.title}}</text>
+          <text class="hit-arrow">{{item.open ? '−' : '+'}}</text>
+        </view>
+        <view class="hit-detail">{{item.detail}}</view>
+        <view wx:if="{{item.open}}" class="hit-basis">
+          <view class="basis-row">
+            <text class="basis-k">规则</text>
+            <text class="basis-v num">{{item.ruleId}} · {{item.ruleVersion}}</text>
+          </view>
+          <view class="basis-row">
+            <text class="basis-k">阈值</text>
+            <text class="basis-v">{{item.threshold}}</text>
+          </view>
+          <view class="basis-row">
+            <text class="basis-k">来源</text>
+            <text class="basis-v">{{item.sourceText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{!hits.length}}" class="tiny">没有命中任何风险信号。</view>
+    </view>
+
+    <!-- 5 医师复核意见 -->
+    <view wx:if="{{signed}}" class="section">
+      <view class="h2 small">医师复核意见</view>
+      <view class="doc-act">{{actionText}}</view>
+      <view wx:if="{{doctorNote}}" class="doc-note">{{doctorNote}}</view>
+      <view wx:else class="tiny">医师未另加说明。</view>
+      <view class="sign-line">
+        签核 {{signedBy || '—'}} · {{signedAtText}}
+      </view>
+    </view>
+
+    <!-- 6 随访安排 -->
+    <view wx:if="{{followUpText}}" class="section">
+      <view class="h2 small">随访安排</view>
+      <view class="body">{{followUpText}}</view>
+    </view>
+
+    <view class="disclaimer">
+      <view>「优先人工复核」只表示医师复核的先后顺序，<text class="strong">不代表患病概率</text>，也不是诊断分级。</view>
+      <view class="mt8">本报告不替代医师诊断。出现明显肿胀、外伤后加重、张口后闭不上，直接就诊。</view>
+    </view>
+
+    <view class="foot-space"></view>
+  </block>
+</view>

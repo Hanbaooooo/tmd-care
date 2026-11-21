@@ -1,5 +1,5 @@
 {
-  "description": "颞安智护：颞下颌关节紊乱患者自我管理与研究入口",
+  "description": "颌心：面向口腔修复、正畸及颞下颌关节门诊初诊的 DC/TMD 双轴智能分诊与随访系统",
   "packOptions": {
     "ignore": [
       {
@@ -9,6 +9,10 @@
       {
         "type": "folder",
         "value": "node_modules"
+      },
+      {
+        "type": "folder",
+        "value": "_offline"
       }
     ],
     "include": []
@@ -23,6 +27,6 @@
   },
   "compileType": "miniprogram",
   "appid": "touristappid",
-  "projectname": "颞安智护",
+  "projectname": "颌心",
   "miniprogramRoot": "./"
 }

@@ -28,7 +28,7 @@ function write(key, value) {
     wx.setStorageSync(key, value);
     return true;
   } catch (err) {
-    console.warn('[颞安智护] local write failed', key, err && err.message);
+    console.warn('[颌心] local write failed', key, err && err.message);
     return false;
   }
 }

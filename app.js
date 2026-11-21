@@ -1,6 +1,6 @@
 App({
   globalData: {
-    appName: '颞安智护',
+    appName: '颌·心',
     session: null,
     track: '',
   },
@@ -10,7 +10,7 @@ App({
     try {
       require('./utils/cloud');
     } catch (err) {
-      console.error('[颞安智护] cloud init failed', err);
+      console.error('[颌心] cloud init failed', err);
     }
   },
 });

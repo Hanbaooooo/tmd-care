@@ -37,7 +37,7 @@ function getSession(opts) {
       return cachedSession;
     })
     .catch(function (err) {
-      console.warn('[颞安智护] getSession failed', err && err.message);
+      console.warn('[颌心] getSession failed', err && err.message);
       cachedSession = null;
       cachedAt = Date.now();
       inflight = null;

@@ -1,10 +1,28 @@
 <bg-layer />
-<view class="build-tag">{{buildTag}}</view>
 <view class="page tab-page">
   <nav-bar />
   <view class="head rise">
     <view class="head-date num">{{dateLine}}</view>
     <view class="h1 head-title">{{greeting}}</view>
+  </view>
+
+  <!-- 本次就诊：候诊绑定的那一次，所有填写都挂在它下面 -->
+  <view
+    class="visit rise-1 {{visit.has ? '' : 'visit-empty'}}"
+    bindtap="onVisitCard"
+    hover-class="pressed"
+    hover-stay-time="80"
+  >
+    <view class="visit-top">
+      <text class="visit-label">本次就诊</text>
+      <text class="visit-badge {{visit.tone}}">{{visit.statusText}}</text>
+    </view>
+    <view wx:if="{{visit.has}}" class="visit-no num">{{visit.visitNo}}</view>
+    <view class="visit-meta">{{visit.metaText || (visit.has ? '已绑定，等待填写' : '点这里绑定，医师才看得到这次填写')}}</view>
+    <view class="visit-act">
+      <text>{{visit.actText}}</text>
+      <text class="visit-arrow">›</text>
+    </view>
   </view>
 
   <!-- 未同步提示：不阻断，只说明 -->
@@ -128,14 +146,6 @@
     <switch checked="{{weeklyRemind}}" bindchange="onWeeklyRemind" color="#38614F" />
   </view>
 
-  <!-- 课程只留一行位置：内容在六周计划页里，首页不再重复一遍标题 -->
-  <view wx:if="{{planState.text}}" class="plan-line rise-2" bindtap="goPlan" hover-class="tap-dim" hover-stay-time="80">
-    <text class="plan-line-label">六周计划</text>
-    <text class="plan-line-state">{{planState.text}}</text>
-    <text class="entry-arrow">›</text>
-  </view>
-
-
   <!-- 最近一次记录 -->
   <view class="section rise-3">
     <view class="row">
@@ -175,26 +185,17 @@
     </view>
   </view>
 
-  <!-- 安心，文字入口，不占导航 -->
-  <view class="entry-line rise-4" bindtap="goAnxin" hover-class="pressed">
+  <!-- 报告入口：只有绑定过就诊才有意义 -->
+  <view wx:if="{{visit.has}}" class="entry-line rise-4" bindtap="goReport" hover-class="pressed">
     <view>
-      <view class="entry-title">安心</view>
-      <view class="tiny">问一个关于症状或课程的问题</view>
-    </view>
-    <text class="entry-arrow">›</text>
-  </view>
-
-  <!-- 研究任务入口：仅单独同意后出现，不抢主任务位 -->
-  <view wx:if="{{hasResearch}}" class="entry-line" bindtap="goResearch" hover-class="pressed">
-    <view>
-      <view class="entry-title">我的研究任务 <text class="tag-research">研究</text></view>
-      <view class="tiny">{{researchHint}}</view>
+      <view class="entry-title">这次的双轴报告</view>
+      <view class="tiny">就诊号 {{visit.visitNo}} · 医师签核后为定稿</view>
     </view>
     <text class="entry-arrow">›</text>
   </view>
 
   <view class="tiny foot">
-    这里只做自我管理，不能看病。脸肿起来、外伤后更疼、张嘴合不上，直接去医院。
+    这里只做就诊前评估与就医参考，不能看病。脸肿起来、外伤后更疼、张嘴合不上，直接去医院。
   </view>
   <view class="tab-fade"></view>
 </view>

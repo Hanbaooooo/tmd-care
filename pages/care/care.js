@@ -15,23 +15,24 @@ Page({
     whenToSee: triage.WHEN_TO_SEE,
     hasSummary: false,
     summaryDate: '',
-    hasResearch: false,
+    hasVisit: false,
     signedIn: false,
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 3 });
+      // tabBar 现在是 首页 / 我的记录 / 就诊与帮助
+      this.getTabBar().setData({ selected: 2 });
     }
     session.getSession().then((s) => {
       this.setData({ signedIn: !!s });
-      return Promise.all([store.latestSummary(), store.listConsents()]).then((res) => {
+      return Promise.all([store.latestSummary(), store.currentVisit()]).then((res) => {
         const summary = res[0];
-        const consents = res[1] || [];
+        const visit = res[1];
         this.setData({
           hasSummary: !!summary,
           summaryDate: summary ? '生成于 ' + formatDate(summary.created_at) : '',
-          hasResearch: consents.some((c) => c.track === 'A' && c.consented),
+          hasVisit: !!visit,
         });
       });
     });
@@ -45,16 +46,12 @@ Page({
     wx.navigateTo({ url: '/pages/summary/summary?synced=1' });
   },
 
-  goAnxin() {
-    wx.navigateTo({ url: '/pages/anxin/anxin' });
+  goReport() {
+    wx.navigateTo({ url: '/pages/report/report' });
   },
 
-  goPlan() {
-    wx.switchTab({ url: '/pages/plan/plan' });
-  },
-
-  goResearch() {
-    wx.navigateTo({ url: '/pages/research/research' });
+  goDesk() {
+    wx.navigateTo({ url: '/pages/desk/desk' });
   },
 
   goLogin() {

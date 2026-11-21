@@ -91,7 +91,7 @@
     </view>
 
     <view class="btn-primary" bindtap="saveAndSummary" hover-class="is-active" hover-stay-time="80">生成就诊摘要</view>
-    <view class="btn-ghost mt16" bindtap="goPlan" hover-class="is-active" hover-stay-time="80">去看看六周计划</view>
+    <view class="btn-ghost mt16" bindtap="goReport" hover-class="is-active" hover-stay-time="80">看这次的双轴报告</view>
 
     <view class="tiny mt24">
       这份东西只整理你填的内容，不做诊断，也不给分型。到底怎么回事，交给医生判断。
