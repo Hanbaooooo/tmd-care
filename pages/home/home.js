@@ -421,11 +421,14 @@ Page({
   /* ---------- 本次就诊 ---------- */
 
   // 扫码进店就当候诊：直接把「本次就诊」建好，不再让患者自己点一次「绑定」。
-  // 只在「扫码启动 + 今天还没就诊 + 今天没自动建过」时执行一次。
+  // 只在「扫码启动 + 今天还没就诊 + 今天没自动建过」时执行。
+  // 注意：失败不置 _bindTried，下次 onShow（比如刚登录回来）还能再试一次。
   maybeBindFromScan() {
-    if (this._bindTried) return;
-    this._bindTried = true;
-    if (!launchedByScan() || this.data.visit.has) return;
+    if (this._bindTried || this._bindBusy) return;
+    if (!launchedByScan() || this.data.visit.has) {
+      this._bindTried = true;
+      return;
+    }
 
     let boundDay = '';
     try {
@@ -433,17 +436,17 @@ Page({
     } catch (err) {
       boundDay = '';
     }
-    if (boundDay === store.today()) return;
+    if (boundDay === store.today()) {
+      this._bindTried = true;
+      return;
+    }
     this.autoCreateVisit();
   },
 
   autoCreateVisit() {
     const self = this;
-    if (this._autoBusy) return;
-    this._autoBusy = true;
-    const done = () => {
-      this._autoBusy = false;
-    };
+    if (this._bindBusy) return;
+    this._bindBusy = true;
 
     // 没有会话先静默登录：wx.login 拿 code 不需要用户点任何东西
     session
@@ -461,8 +464,9 @@ Page({
         });
       })
       .then(function (row) {
-        done();
         if (!row) throw new Error('empty');
+        self._bindBusy = false;
+        self._bindTried = true;
         try {
           wx.setStorageSync(SCAN_MARK_KEY, store.today());
         } catch (err) {}
@@ -470,8 +474,8 @@ Page({
         self.askName(true);
       })
       .catch(function () {
-        done();
-        // 失败不弹错：卡片还在，患者点一下就是手动绑定
+        self._bindBusy = false;
+        // 失败不弹错、也不锁死：卡片还在，下次进页面或患者手动点都能再来
       });
   },
 
