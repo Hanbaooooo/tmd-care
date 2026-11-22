@@ -110,6 +110,15 @@
                 hover-class="chip-press"
                 hover-stay-time="60"
               >{{o.label}}</view>
+              <!-- 「无」是互斥标记：明确查过、没有熟悉性疼痛部位。
+                   没有它，这类患者永远填不完必填项。 -->
+              <view
+                class="chip chip-none {{siteChecked.none ? 'on' : ''}}"
+                bindtap="toggleSite"
+                data-key="none"
+                hover-class="chip-press"
+                hover-stay-time="60"
+              >无</view>
             </view>
             <view wx:if="{{f.hint}}" class="tiny mt6">{{f.hint}}</view>
           </block>

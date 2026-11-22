@@ -512,6 +512,36 @@
   line-height: 1.6;
 }
 
+/* 患者称呼：可空。空着用主题色提示「填写姓名」，填了就变成正常正文 */
+.visit-name {
+  display: flex;
+  align-items: baseline;
+  margin-top: 8rpx;
+  padding: 6rpx 0 2rpx;
+}
+
+.visit-name-k {
+  font-size: 22rpx;
+  color: var(--ink-3);
+  letter-spacing: 1rpx;
+  margin-right: 12rpx;
+}
+
+.visit-name-v {
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.visit-name-v.is-empty {
+  color: var(--moss);
+}
+
+.visit-name-x {
+  margin-left: auto;
+  font-size: 21rpx;
+  color: var(--ink-3);
+}
+
 .visit-act {
   display: flex;
   align-items: center;

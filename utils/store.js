@@ -510,6 +510,8 @@ function createVisit(payload) {
           .from('tmd_visits')
           .insert({
             visit_no: payload.visit_no,
+            // owner_name 是患者自填的称呼：医师端队列靠它认人，不填就显示「未署名」
+            owner_name: payload.owner_name || null,
             clinic: payload.clinic || null,
             doctor_name: payload.doctor_name || null,
             visit_date: payload.visit_date || today(),
@@ -521,6 +523,26 @@ function createVisit(payload) {
       .then(check)
       .then(function (rows) {
         return rows && rows[0] ? rows[0] : null;
+      });
+  });
+}
+
+// 患者自填称呼。医师端队列用它认人，属于「可写可不写」的字段，
+// 写失败不阻塞任何主流程。
+function updateVisitName(id, name) {
+  if (!id) return Promise.resolve(null);
+  return signedIn().then(function (ok) {
+    if (!ok) return null;
+    return Promise.resolve()
+      .then(function () {
+        return db().from('tmd_visits').update({ owner_name: name || null }).eq('id', id).select();
+      })
+      .then(check)
+      .then(function (rows) {
+        return rows && rows[0] ? rows[0] : null;
+      })
+      .catch(function () {
+        return null;
       });
   });
 }
@@ -788,6 +810,7 @@ module.exports = {
   listScaleResults,
   syncPending,
   createVisit,
+  updateVisitName,
   listVisits,
   currentVisit,
   getVisit,

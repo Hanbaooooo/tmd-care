@@ -88,6 +88,20 @@
   border-color: var(--moss);
 }
 
+/* 「无」用虚线：和具体部位区分开，不能一眼看成同类选项 */
+.chip-none {
+  border-style: dashed;
+  border-color: rgba(30, 47, 41, 0.2);
+  color: var(--ink-3);
+}
+
+.chip-none.on {
+  color: #F3F7F4;
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+  border-style: solid;
+}
+
 .chip-press {
   opacity: 0.72;
 }

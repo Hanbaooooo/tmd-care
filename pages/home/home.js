@@ -8,6 +8,15 @@ const psych = require('../../data/psych');
 const weeks = require('../../utils/weeks');
 const CONFIG = require('../../data/config');
 
+// 扫码进店时自动建档用的诊所名。改这里就够，不用去动数据库。
+const CLINIC_NAME = CONFIG.clinicName || '口腔颌面疼痛专科';
+
+// 这些 scene 都表示「扫了码进来」：1011 扫码 / 1012 长按识别 / 1013 相册二维码 /
+// 1047 扫小程序码 / 1048 长按识别小程序码。扫的是诊台那张固定码，没有带参，
+// 所以只能靠 scene 判断，不能靠 query。
+const SCAN_SCENES = [1011, 1012, 1013, 1047, 1048];
+const SCAN_MARK_KEY = 'hexin_scan_bound_day';
+
 // 就诊状态只影响「医师那边看到什么」，不评价病情
 const VISIT_STATUS = {
   waiting_self_report: { text: '待自评', tone: 'note', act: '开始自评' },
@@ -25,10 +34,13 @@ function visitView(row) {
       tone: 'note',
       metaText: '',
       actText: '绑定本次就诊',
+      nameText: '',
+      hasName: false,
     };
   }
   const st = VISIT_STATUS[row.status] || VISIT_STATUS.waiting_self_report;
   const meta = [row.clinic, row.visit_date].filter(Boolean).join(' · ');
+  const name = row.owner_name || '';
   return {
     has: true,
     id: row.id,
@@ -37,7 +49,23 @@ function visitView(row) {
     tone: st.tone,
     metaText: meta,
     actText: st.act,
+    nameText: name,
+    hasName: !!name,
   };
+}
+
+// 本次启动是不是扫码进来的
+function launchedByScan() {
+  let opt = {};
+  try {
+    opt = wx.getEnterOptionsSync() || {};
+  } catch (err) {
+    opt = {};
+  }
+  if (SCAN_SCENES.indexOf(Number(opt.scene)) >= 0) return true;
+  const q = opt.query || {};
+  // 兜底：普通链接二维码（?q=）或带参数的码
+  return q.src === 'clinic' || q.from === 'scan';
 }
 
 function newVisitNo() {
@@ -113,7 +141,9 @@ Page({
       this.getTabBar().setData({ selected: 0 });
     }
     this.setData({ greeting: greetingText(), dateLine: dateLine() });
-    this.refresh();
+    this.refresh().then(() => {
+      this.maybeBindFromScan();
+    });
   },
 
 
@@ -390,6 +420,92 @@ Page({
 
   /* ---------- 本次就诊 ---------- */
 
+  // 扫码进店就当候诊：直接把「本次就诊」建好，不再让患者自己点一次「绑定」。
+  // 只在「扫码启动 + 今天还没就诊 + 今天没自动建过」时执行一次。
+  maybeBindFromScan() {
+    if (this._bindTried) return;
+    this._bindTried = true;
+    if (!launchedByScan() || this.data.visit.has) return;
+
+    let boundDay = '';
+    try {
+      boundDay = wx.getStorageSync(SCAN_MARK_KEY) || '';
+    } catch (err) {
+      boundDay = '';
+    }
+    if (boundDay === store.today()) return;
+    this.autoCreateVisit();
+  },
+
+  autoCreateVisit() {
+    const self = this;
+    if (this._autoBusy) return;
+    this._autoBusy = true;
+    const done = () => {
+      this._autoBusy = false;
+    };
+
+    // 没有会话先静默登录：wx.login 拿 code 不需要用户点任何东西
+    session
+      .getSession()
+      .then(function (s) {
+        return s || (session.canWechatLogin() ? session.signInWithWechat() : null);
+      })
+      .then(function (s) {
+        if (!s) throw new Error('no-session');
+        return store.createVisit({
+          visit_no: newVisitNo(),
+          clinic: CLINIC_NAME,
+          status: 'waiting_self_report',
+          source: 'scan',
+        });
+      })
+      .then(function (row) {
+        done();
+        if (!row) throw new Error('empty');
+        try {
+          wx.setStorageSync(SCAN_MARK_KEY, store.today());
+        } catch (err) {}
+        self.setData({ visit: visitView(row), signedIn: true });
+        self.askName(true);
+      })
+      .catch(function () {
+        done();
+        // 失败不弹错：卡片还在，患者点一下就是手动绑定
+      });
+  },
+
+  askName(first) {
+    const self = this;
+    if (!this.data.visit.has) return;
+    wx.showModal({
+      title: first ? '留个称呼' : '修改称呼',
+      editable: true,
+      placeholderText: '如：王女士（医师认人用）',
+      content: this.data.visit.nameText || '',
+      confirmText: '保存',
+      cancelText: first ? '稍后' : '取消',
+      success(res) {
+        if (!res.confirm) return;
+        const name = String(res.content || '')
+          .trim()
+          .slice(0, 20);
+        store.updateVisitName(self.data.visit.id, name).then(function (row) {
+          if (!row) {
+            wx.showToast({ title: '没保存上，稍后再试', icon: 'none' });
+            return;
+          }
+          self.setData({ visit: visitView(row) });
+        });
+      },
+    });
+  },
+
+  editName() {
+    if (!this.data.visit.has) return;
+    this.askName(false);
+  },
+
   // 没有就诊时点一下：建一条。真实场景由诊所二维码带参，演示时直接生成。
   bindVisit() {
     const self = this;
@@ -406,12 +522,17 @@ Page({
     }
     wx.showLoading({ title: '正在建立…' });
     store
-      .createVisit({ visit_no: newVisitNo(), status: 'waiting_self_report', source: 'manual' })
+      .createVisit({
+        visit_no: newVisitNo(),
+        clinic: CLINIC_NAME,
+        status: 'waiting_self_report',
+        source: 'manual',
+      })
       .then(function (row) {
         wx.hideLoading();
         if (!row) throw new Error('未返回就诊记录');
         self.setData({ visit: visitView(row) });
-        wx.showToast({ title: '已绑定本次就诊', icon: 'none' });
+        self.askName(true);
       })
       .catch(function (err) {
         wx.hideLoading();

@@ -1,0 +1,10 @@
+{
+  "name": "hexin-desk",
+  "private": true,
+  "version": "1.0.0",
+  "description": "颌心 · 临床工作台（静态站 + 云函数同域代理）",
+  "scripts": {
+    "start": "node server.js",
+    "sync-data": "node sync-data.js"
+  }
+}

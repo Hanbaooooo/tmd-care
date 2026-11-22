@@ -13,6 +13,14 @@
       {
         "type": "folder",
         "value": "_offline"
+      },
+      {
+        "type": "folder",
+        "value": "web"
+      },
+      {
+        "type": "file",
+        "value": ".wbapp_8pOkTB2fOGqdgtYlbbKIE2.genie"
       }
     ],
     "include": []

@@ -192,6 +192,24 @@ function evaluate(input) {
     // 有缺项时，上面的高分判定仍保留，但整体状态至少是「需补充评估」
   }
 
+  // 四张量表一个数都没有：这不是「都正常」，是「还没做」。
+  // 少了这一条，患者没自评的病例会被判成「常规记录」，等于把缺项当成了阴性。
+  const anyAxis2 = ['obc', 'gad7', 'phq4', 'jfls8'].some(function (k) {
+    const v = a2[k] || {};
+    return num(v.score) !== null;
+  });
+  if (!anyAxis2) {
+    push(
+      hits,
+      'R-AX2-EMPTY',
+      'need_more',
+      '尚未完成 Axis II 自评',
+      '四张量表都没有读到分数，本次无法按双轴判读。请患者先完成自评，或由医师补录后再出报告。',
+      '至少完成一张量表',
+      ['axis2']
+    );
+  }
+
   /* ---------- Axis I ---------- */
 
   const comp = axis1.completeness(a1);

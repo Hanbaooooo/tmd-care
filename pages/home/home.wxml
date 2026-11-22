@@ -18,6 +18,17 @@
       <text class="visit-badge {{visit.tone}}">{{visit.statusText}}</text>
     </view>
     <view wx:if="{{visit.has}}" class="visit-no num">{{visit.visitNo}}</view>
+    <view
+      wx:if="{{visit.has}}"
+      class="visit-name"
+      catchtap="editName"
+      hover-class="tap-dim"
+      hover-stay-time="60"
+    >
+      <text class="visit-name-k">患者</text>
+      <text class="visit-name-v {{visit.hasName ? '' : 'is-empty'}}">{{visit.hasName ? visit.nameText : '填写姓名'}}</text>
+      <text class="visit-name-x">{{visit.hasName ? '修改' : '医师认人用'}}</text>
+    </view>
     <view class="visit-meta">{{visit.metaText || (visit.has ? '已绑定，等待填写' : '点这里绑定，医师才看得到这次填写')}}</view>
     <view class="visit-act">
       <text>{{visit.actText}}</text>

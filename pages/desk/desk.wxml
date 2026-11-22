@@ -1,58 +1,179 @@
 <bg-layer />
-<view class="page">
+<view class="page desk">
   <nav-bar back="{{true}}" />
 
-  <view class="h1">医师工作台</view>
-  <view class="muted intro">面诊时在这里录 Axis I 体征，核对系统给的复核提示，然后签核。</view>
-
-  <view class="mode-note">
-    <view class="mode-k">当前范围</view>
-    <view class="mode-v">本机账号演示模式：只列出用这个账号提交的评估。接入科室账号后才会显示全科室队列。</view>
-  </view>
-
-  <view class="tabs">
-    <view
-      class="tab {{filter === item.key ? 'on' : ''}}"
-      wx:for="{{tabs}}"
-      wx:key="key"
-      bindtap="pickFilter"
-      data-key="{{item.key}}"
-    >
-      {{item.label}}<text class="tab-num">{{item.count}}</text>
+  <!-- 身份条：谁在看这份队列 -->
+  <view class="wb-head">
+    <view class="wb-brand">
+      <view class="wb-logo">颌</view>
+      <view class="wb-title">
+        <view class="wb-name">临床工作台</view>
+        <view class="wb-sub">DC/TMD 双轴智能分诊与随访</view>
+      </view>
     </view>
+    <view class="wb-id">本机账号</view>
   </view>
 
-  <view wx:if="{{loading}}" class="empty">正在读取…</view>
-
-  <view wx:elif="{{!rows.length}}" class="empty">
-    <view>这里还没有待处理的评估。</view>
-    <view class="mt12">患者用同一个账号完成自评并提交后，会出现在这里。</view>
-  </view>
-
-  <view wx:else>
+  <!-- 四个数：今天的盘子有多大 -->
+  <view class="kpi">
     <view
-      class="q-row"
-      wx:for="{{rows}}"
-      wx:key="id"
-      bindtap="openDetail"
-      data-id="{{item.id}}"
+      class="kpi-cell"
+      wx:for="{{kpi}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="tapKpi"
       hover-class="tap-dim"
       hover-stay-time="60"
     >
-      <view class="q-top">
-        <text class="q-no num">{{item.visitNo}}</text>
-        <text class="q-badge {{item.tone}}">{{item.stateLabel}}</text>
+      <view class="kpi-k">{{item.label}}</view>
+      <view class="kpi-v num">{{item.value}}<text class="kpi-unit">{{item.unit}}</text></view>
+    </view>
+  </view>
+
+  <!-- 今日就诊进展 -->
+  <view class="panel">
+    <view class="panel-hd">
+      <text class="panel-t">今日就诊进展</text>
+      <text class="panel-x">共 {{todayTotal}} 例</text>
+    </view>
+    <view class="flow">
+      <view class="flow-i" wx:for="{{funnel}}" wx:key="key">
+        <view class="flow-l">{{item.label}}</view>
+        <view class="flow-dot {{item.done ? 'done' : ''}} {{item.active ? 'active' : ''}}">
+          <text wx:if="{{item.done}}" class="flow-tick">✓</text>
+        </view>
+        <view class="flow-n num {{item.done ? 'on' : ''}}">{{item.value}}</view>
       </view>
-      <view class="q-mid">
-        <text class="q-hits">{{item.hitText}}</text>
-        <text class="q-arrow">›</text>
+    </view>
+    <view wx:if="{{!todayTotal}}" class="panel-empty">今天还没有报到记录。患者从首页「本次就诊」报到后会出现在这里。</view>
+  </view>
+
+  <!-- 队列 -->
+  <view class="panel">
+    <view class="panel-hd">
+      <text class="panel-t">患者就诊队列</text>
+      <text class="panel-x">共 {{total}} 例</text>
+    </view>
+
+    <scroll-view class="chips-wrap" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="chips">
+        <view
+          class="chip {{filter === item.key ? 'on' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickFilter"
+          hover-class="chip-press"
+          hover-stay-time="60"
+        >
+          {{item.label}}<text class="chip-n num">{{item.count}}</text>
+        </view>
       </view>
-      <view class="q-foot">
-        <text class="q-time">{{item.timeText}}</text>
-        <text wx:if="{{item.signed}}" class="q-signed">已签核</text>
+    </scroll-view>
+
+    <view wx:if="{{loading}}" class="panel-empty">正在读取…</view>
+
+    <view wx:elif="{{!rows.length}}" class="panel-empty">
+      <view>这一栏是空的。</view>
+      <view class="mt8">{{total ? '换个筛选看看。' : '患者用同一个账号完成自评并提交后，会出现在这里。'}}</view>
+    </view>
+
+    <view wx:else class="queue">
+      <view
+        class="q-card"
+        wx:for="{{rows}}"
+        wx:key="key"
+        data-kind="{{item.kind}}"
+        data-id="{{item.id}}"
+        bindtap="openRow"
+        hover-class="tap-dim"
+        hover-stay-time="60"
+      >
+        <view class="q-top">
+          <text class="q-no num">{{item.visitNo}}</text>
+          <text class="q-badge {{item.tone}}">{{item.stateLabel}}</text>
+        </view>
+
+        <view class="q-meta">
+          <text class="q-time">{{item.timeText}}</text>
+          <text wx:if="{{item.doctorName}}" class="q-sep">·</text>
+          <text wx:if="{{item.doctorName}}" class="q-doc">{{item.doctorName}}</text>
+        </view>
+
+        <view class="q-prog">
+          <view class="bar"><view class="bar-in {{item.percent < 60 ? 'low' : ''}}" style="width:{{item.percent}}%"></view></view>
+          <text class="q-pct num">{{item.percent}}%</text>
+        </view>
+
+        <view class="q-hint">{{item.hitText}}</view>
+
+        <view class="q-acts">
+          <view
+            wx:if="{{item.canReview}}"
+            class="act"
+            data-kind="report"
+            data-id="{{item.id}}"
+            catchtap="openRow"
+            hover-class="act-press"
+            hover-stay-time="60"
+          >{{item.actLabel}}</view>
+          <view
+            wx:if="{{item.canView}}"
+            class="act ghost"
+            data-id="{{item.id}}"
+            catchtap="openReport"
+            hover-class="act-press"
+            hover-stay-time="60"
+          >查看报告</view>
+          <view wx:if="{{!item.canReview && !item.canView}}" class="act-none">等患者自评</view>
+        </view>
       </view>
     </view>
   </view>
+
+  <!-- 智能提醒 -->
+  <view class="panel">
+    <view class="panel-hd">
+      <text class="panel-t">智能提醒</text>
+    </view>
+    <view wx:if="{{!alerts.length}}" class="panel-empty">没有需要提前处理的病例。</view>
+    <view wx:else class="alert-list">
+      <view
+        class="alert-row"
+        wx:for="{{alerts}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="tapAlert"
+        hover-class="tap-dim"
+        hover-stay-time="60"
+      >
+        <view class="alert-main">
+          <view class="alert-t">{{item.label}}</view>
+          <view class="alert-h">{{item.hint}}</view>
+        </view>
+        <view class="alert-n num {{item.tone}}">{{item.count}}</view>
+        <text class="alert-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 随访安排 -->
+  <view class="panel">
+    <view class="panel-hd">
+      <text class="panel-t">随访安排</text>
+      <text class="panel-x">已签核</text>
+    </view>
+    <view wx:if="{{!followItems.length}}" class="panel-empty">还没有排随访的病例。签核时填了随访计划，会列在这里。</view>
+    <view wx:else class="fu-list">
+      <view class="fu-row" wx:for="{{followItems}}" wx:key="key">
+        <text class="fu-no num">{{item.visitNo}}</text>
+        <text class="fu-txt">{{item.text}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="disc">风险分层仅代表病例复核优先级，不等同于患病概率。</view>
+  <view class="scope">本机账号演示模式：只列出用这个账号提交的评估，不含全科室队列。</view>
 
   <view class="foot-space"></view>
 </view>

@@ -184,7 +184,13 @@ function derive(a) {
     out.push({ key: key, text: text, fieldKey: fieldKey, level: level || 'note' });
   }
 
-  const sites = Array.isArray(src.palpation_sites) ? src.palpation_sites : [];
+  // 'none' 是「明确触过、没有熟悉性疼痛部位」的显式标记。
+  // 空数组表示「还没查」，两者临床上完全不同，不能混为一谈——
+  // 所以 completeness() 把 [] 当作缺项，把 ['none'] 当作已完成。
+  const rawSites = Array.isArray(src.palpation_sites) ? src.palpation_sites : [];
+  const sites = rawSites.filter(function (k) {
+    return k !== 'none';
+  });
   const muscleHit = MUSCLE_KEYS.filter(function (k) {
     return sites.indexOf(k) >= 0;
   });
@@ -198,7 +204,7 @@ function derive(a) {
   if (jointHit.length) {
     push('palp_joint', '触诊在关节区再现熟悉疼痛（' + jointHit.length + ' 处）', 'palpation_sites', 'caution');
   }
-  if (sites.length === 0 && !isBlank(src.palpation_sites)) {
+  if (rawSites.length && sites.length === 0) {
     push('palp_none', '未触到熟悉性疼痛部位', 'palpation_sites', 'note');
   }
 

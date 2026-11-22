@@ -1,29 +1,18 @@
 const store = require('../../utils/store');
-const rules = require('../../data/rules');
-
-const FILTERS = [
-  { key: 'draft', label: '待处理' },
-  { key: 'signed', label: '已签核' },
-  { key: 'all', label: '全部' },
-];
-
-function pad(n) {
-  return n < 10 ? '0' + n : '' + n;
-}
-
-function fmt(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  return pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-}
+const view = require('../../utils/desk-view');
 
 Page({
   data: {
     loading: true,
-    filter: 'draft',
+    filter: 'all',
     tabs: [],
     rows: [],
+    kpi: [],
+    funnel: [],
+    alerts: [],
+    followItems: [],
+    todayTotal: 0,
+    total: 0,
   },
 
   onShow() {
@@ -39,62 +28,75 @@ Page({
   load() {
     const self = this;
     self.setData({ loading: true });
-    return store
-      .listReports('')
-      .then(function (list) {
-        self.all = list || [];
+    return Promise.all([store.listReports(''), store.listVisits(60)])
+      .then(function (res) {
+        self.shape = view.build({ reports: res[0] || [], visits: res[1] || [] });
         self.render();
       })
-      .catch(function () {
-        self.all = [];
+      .catch(function (err) {
+        console.warn('[颌心] desk load failed', err && err.message);
+        self.shape = view.build({ reports: [], visits: [] });
         self.render();
       });
   },
 
   render() {
-    const all = this.all || [];
+    const s =
+      this.shape ||
+      { rows: [], tabs: [], kpi: [], funnel: [], alerts: [], followItems: [], todayTotal: 0 };
     const filter = this.data.filter;
-
-    const tabs = FILTERS.map(function (f) {
-      const count =
-        f.key === 'all'
-          ? all.length
-          : all.filter(function (r) {
-              return r.status === f.key;
-            }).length;
-      return { key: f.key, label: f.label, count: count };
+    const rows = s.rows.filter(function (r) {
+      return filter === 'all' || r.bucket === filter;
     });
 
-    const picked = all.filter(function (r) {
-      if (filter === 'all') return true;
-      if (filter === 'draft') return r.status === 'draft';
-      return r.status === filter;
+    this.setData({
+      loading: false,
+      tabs: s.tabs,
+      kpi: s.kpi,
+      funnel: s.funnel,
+      alerts: s.alerts,
+      followItems: s.followItems,
+      todayTotal: s.todayTotal,
+      total: s.rows.length,
+      rows: rows,
     });
-
-    const rows = picked.map(function (r) {
-      const st = rules.STATES[r.rule_state] || null;
-      const hits = Array.isArray(r.rule_hits) ? r.rule_hits : [];
-      return {
-        id: r.id,
-        visitNo: r.visit_no || '#' + r.visit_id,
-        stateLabel: st ? st.label : '未判定',
-        tone: st ? st.tone : 'note',
-        hitText: hits.length ? '命中 ' + hits.length + ' 条 · ' + hits[0].title : '未命中风险信号',
-        signed: r.status === 'signed',
-        timeText: fmt(r.updated_at || r.created_at),
-      };
-    });
-
-    this.setData({ loading: false, tabs: tabs, rows: rows });
   },
 
   pickFilter(e) {
-    this.setData({ filter: e.currentTarget.dataset.key }, () => {
+    const key = e.currentTarget.dataset.key;
+    this.setData({ filter: key }, () => {
       this.render();
     });
   },
 
-  openDetail(e) {
-    wx.navigateTo({ url: '/pages/desk-detail/desk-detail?id=' + e.currentTarget.dataset.id });
+  tapKpi(e) {
+    const map = { today: 'all', review: 'review', sign: 'sign', follow: 'done' };
+    const key = map[e.currentTarget.dataset.key];
+    if (!key) return;
+    this.setData({ filter: key }, () => {
+      this.render();
+    });
+  },
+
+  tapAlert(e) {
+    const map = { priority: 'review', sign: 'sign', overdue: 'input' };
+    const key = map[e.currentTarget.dataset.key];
+    if (!key) return;
+    this.setData({ filter: key }, () => {
+      this.render();
+    });
+  },
+
+  openRow(e) {
+    const ds = e.currentTarget.dataset;
+    if (ds.kind === 'visit') {
+      wx.showToast({ title: '患者尚未提交自评', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/desk-detail/desk-detail?id=' + ds.id });
+  },
+
+  openReport(e) {
+    wx.navigateTo({ url: '/pages/report/report?id=' + e.currentTarget.dataset.id });
   },
 });

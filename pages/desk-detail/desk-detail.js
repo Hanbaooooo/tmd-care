@@ -197,15 +197,29 @@ Page({
 
   toggleSite(e) {
     const key = e.currentTarget.dataset.key;
-    const arr = (this.formData.palpation_sites || []).slice();
+    let arr = (this.formData.palpation_sites || []).slice();
     const i = arr.indexOf(key);
-    if (i >= 0) arr.splice(i, 1);
-    else arr.push(key);
+
+    if (key === 'none') {
+      // 「无」与具体部位互斥
+      arr = i >= 0 ? [] : ['none'];
+    } else if (i >= 0) {
+      arr.splice(i, 1);
+    } else {
+      arr = arr.filter(function (k) {
+        return k !== 'none';
+      });
+      arr.push(key);
+    }
     this.formData.palpation_sites = arr;
 
+    // 整组重算：互斥操作会同时改动多个勾选状态
+    const checked = {};
+    arr.forEach(function (k) {
+      checked[k] = true;
+    });
+
     const form = Object.assign({}, this.data.form, { palpation_sites: arr });
-    const checked = Object.assign({}, this.data.siteChecked);
-    checked[key] = arr.indexOf(key) >= 0;
     this.setData({ form: form, siteChecked: checked }, () => {
       this.recalc();
     });
