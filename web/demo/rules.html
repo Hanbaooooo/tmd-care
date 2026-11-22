@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>颌·心 · 量表与判定规则样例</title>
+<style>
+  :root {
+    --paper: #F6FBF9; --surface: #FFFFFF; --ink: #1E2F29; --ink-2: #4F635A; --ink-3: #84958C;
+    --moss: #38614F; --sage-bg: rgba(194, 213, 200, 0.28); --line: rgba(30, 47, 41, 0.11);
+    --line-soft: rgba(30, 47, 41, 0.065); --note: #5C7A85; --note-bg: rgba(92, 122, 133, 0.1);
+    --alert: #96564A; --alert-bg: rgba(150, 86, 74, 0.1); --caution: #8A6C42; --caution-bg: rgba(192, 161, 112, 0.18);
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    --serif: Georgia, "Songti SC", serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 40px 0 56px; background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  .sheet { width: 940px; margin: 0 auto; }
+  .hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 40px; height: 40px; border-radius: 11px; background: var(--moss); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-family: var(--serif); }
+  .bname { font-size: 17px; font-weight: 600; letter-spacing: 0.04em; }
+  .bsub { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.06em; }
+  .hd-r { text-align: right; }
+  .doc-t { font-size: 21px; font-weight: 600; letter-spacing: 0.02em; }
+  .doc-s { font-size: 11.5px; color: var(--ink-3); margin-top: 6px; }
+  .sec { margin-top: 26px; }
+  .sec-hd { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+  .sec-t { font-size: 14px; font-weight: 600; letter-spacing: 0.03em; }
+  .sec-n { font-size: 11.5px; color: var(--ink-3); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .card { background: var(--surface); border-radius: 14px; padding: 16px 18px; box-shadow: 0 6px 20px rgba(30, 47, 41, 0.05); }
+  .c-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .c-t { font-size: 13.5px; font-weight: 600; }
+  .c-k { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.06em; }
+  .c-meta { margin-top: 8px; font-size: 12px; color: var(--ink-2); line-height: 1.7; }
+  .bands { display: flex; gap: 6px; margin-top: 11px; flex-wrap: wrap; }
+  .band { font-size: 11px; padding: 3px 9px; border-radius: 999px; background: var(--sage-bg); color: var(--moss); }
+  .band.caution { background: var(--caution-bg); color: var(--caution); }
+  .band.alert { background: var(--alert-bg); color: var(--alert); }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(30, 47, 41, 0.05); }
+  th, td { text-align: left; padding: 9px 14px; font-size: 12px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  th { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: 0.06em; background: rgba(246, 251, 249, 0.9); }
+  tr:last-child td { border-bottom: 0; }
+  td.id { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-2); white-space: nowrap; }
+  td.cond { color: var(--ink); }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .pill.priority { background: var(--alert-bg); color: var(--alert); }
+  .pill.need_more { background: var(--caution-bg); color: var(--caution); }
+  .pill.pending_input { background: var(--note-bg); color: var(--note); }
+  .pill.routine { background: var(--sage-bg); color: var(--moss); }
+  .states { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .st { background: var(--surface); border-radius: 14px; padding: 14px 16px; box-shadow: 0 6px 20px rgba(30, 47, 41, 0.05); border-left: 3px solid var(--moss-soft, #8FA79A); }
+  .st.priority { border-left-color: var(--alert); }
+  .st.need_more { border-left-color: var(--caution); }
+  .st.pending_input { border-left-color: var(--note); }
+  .st.routine { border-left-color: #8FA79A; }
+  .st-t { font-size: 13px; font-weight: 600; }
+  .st-d { font-size: 11.5px; color: var(--ink-2); line-height: 1.65; margin-top: 7px; }
+  .ft { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 11px; color: var(--ink-3); line-height: 1.85; }
+  .note-line { font-size: 11.5px; color: var(--ink-3); margin-top: 8px; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="hd">
+    <div class="brand">
+      <div class="logo">颌</div>
+      <div>
+        <div class="bname">颌·心</div>
+        <div class="bsub">双轴分诊与随访 · 预研样例</div>
+      </div>
+    </div>
+    <div class="hd-r">
+      <div class="doc-t">量表与判定规则样例</div>
+      <div class="doc-s">规则版本 rules-1.0 · 四张 Axis II 量表 · 15 条判定规则 · 4 个复核状态</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-t">一、Axis II 自评量表</div><div class="sec-n">患者候诊时自填，共 40 题</div></div>
+    <div class="grid">
+      <div class="card">
+        <div class="c-hd"><div class="c-t">口腔行为清单 OBC-21</div><div class="c-k">21 题 · 0–84</div></div>
+        <div class="c-meta">记录白天紧咬牙、牙齿不自觉相碰、托腮等习惯的频次。分值越高，日常负荷越大。</div>
+        <div class="bands"><span class="band">低 ≤ 17</span><span class="band caution">偏高 18–24</span><span class="band alert">高 &gt; 24</span></div>
+      </div>
+      <div class="card">
+        <div class="c-hd"><div class="c-t">广泛性焦虑 GAD-7</div><div class="c-k">7 题 · 0–21</div></div>
+        <div class="c-meta">近两周的紧张、担忧与难以放松。情绪因素常参与疼痛维持。</div>
+        <div class="bands"><span class="band">无 0–4</span><span class="band">轻度 5–9</span><span class="band caution">中度 10–14</span><span class="band alert">重度 ≥ 15</span></div>
+      </div>
+      <div class="card">
+        <div class="c-hd"><div class="c-t">情绪筛查 PHQ-4</div><div class="c-k">4 题 · 0–12</div></div>
+        <div class="c-meta">抑郁与焦虑各两题的极简筛查，用于判断是否需要进一步心理支持。</div>
+        <div class="bands"><span class="band">无 0–2</span><span class="band">轻度 3–5</span><span class="band caution">中度 6–8</span><span class="band alert">重度 ≥ 9</span></div>
+      </div>
+      <div class="card">
+        <div class="c-hd"><div class="c-t">下颌功能受限 JFLS-8</div><div class="c-k">8 题 · 总分 0–80</div></div>
+        <div class="c-meta">咀嚼、张口、吞咽等八项日常动作的受限程度，报告里按均分（0–10）呈现。</div>
+        <div class="bands"><span class="band">几乎不受限 &lt; 5</span><span class="band">轻度 5–19</span><span class="band caution">中度 20–39</span><span class="band alert">明显受限 ≥ 40</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-t">二、判定规则</div><div class="sec-n">每条命中都带 ruleId / 阈值 / 依据字段，报告上可逐条展开</div></div>
+    <table>
+      <thead><tr><th style="width:150px">规则 ID</th><th style="width:250px">触发条件</th><th style="width:110px">判定</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td class="id">R-AX2-OBC</td><td class="cond">OBC-21 &gt; 24</td><td><span class="pill priority">优先人工复核</span></td><td>口腔行为清单偏高，需面诊确认并给针对性建议</td></tr>
+        <tr><td class="id">R-AX2-GAD7</td><td class="cond">GAD-7 ≥ 10</td><td><span class="pill priority">优先人工复核</span></td><td>焦虑达到中度以上，必要时转心理支持</td></tr>
+        <tr><td class="id">R-AX2-PHQ4</td><td class="cond">PHQ-4 ≥ 6</td><td><span class="pill priority">优先人工复核</span></td><td>情绪筛查达到中度以上，建议纳入复核</td></tr>
+        <tr><td class="id">R-AX2-JFLS8</td><td class="cond">JFLS-8 均分 ≥ 5</td><td><span class="pill priority">优先人工复核</span></td><td>下颌功能受限明显，日常咀嚼张口受影响</td></tr>
+        <tr><td class="id">R-AX2-NRS</td><td class="cond">NRS ≥ 7</td><td><span class="pill priority">优先人工复核</span></td><td>自报疼痛强度偏高</td></tr>
+        <tr><td class="id">R-AX2-MISSING</td><td class="cond">Axis II 有未完成项</td><td><span class="pill need_more">需补充评估</span></td><td>缺项会让判定失去依据</td></tr>
+        <tr><td class="id">R-AX2-EMPTY</td><td class="cond">四张量表均无分数</td><td><span class="pill need_more">需补充评估</span></td><td>不是「都正常」，是「还没做」</td></tr>
+        <tr><td class="id">R-AX2-OBC-VER</td><td class="cond">OBC 版本非 21 项完整版</td><td><span class="pill need_more">需补充评估</span></td><td>跨版本不套阈值，需重填后判读</td></tr>
+        <tr><td class="id">R-AX1-MISSING</td><td class="cond">Axis I 必填 7 项未齐</td><td><span class="pill pending_input">待补录</span></td><td>面诊信息未录，报告在此之前不成立</td></tr>
+        <tr><td class="id">R-AX1-MIO</td><td class="cond">最大主动张口 &lt; 40 mm</td><td><span class="pill priority">优先人工复核</span></td><td>需区分关节源性还是肌源性限制</td></tr>
+        <tr><td class="id">R-AX1-PASSIVE</td><td class="cond">被动 − 主动 ≥ 5 mm</td><td><span class="pill need_more">需补充评估</span></td><td>提示限制可能来自肌肉，结合触诊确认</td></tr>
+        <tr><td class="id">R-AX1-LOCK</td><td class="cond">锁结 ∈ {闭锁, 开锁}</td><td><span class="pill priority">优先人工复核</span></td><td>需当次处理或复位</td></tr>
+        <tr><td class="id">R-AX1-CREPITUS</td><td class="cond">任一侧关节区摩擦音</td><td><span class="pill need_more">需补充评估</span></td><td>提示关节面退行性改变可能，建议影像</td></tr>
+        <tr><td class="id">R-XCHECK-LOWHIGH</td><td class="cond">NRS ≤ 2 且检查再现熟悉疼痛</td><td><span class="pill need_more">需补充评估</span></td><td>自报与查体不一致，需确认评估时点</td></tr>
+        <tr><td class="id">R-XCHECK-HIGHLOW</td><td class="cond">NRS ≥ 7 且检查未再现</td><td><span class="pill need_more">需补充评估</span></td><td>需确认部位描述是否一致</td></tr>
+      </tbody>
+    </table>
+    <div class="note-line">阈值集中定义在 <b>data/rules.js</b> 的 THRESHOLDS 中，页面上的说明文字随阈值自动变化；网页端与小程序共用同一份规则代码，不重复实现。</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-t">三、四个复核状态</div><div class="sec-n">表示「医师下一步该做什么」，不是病情轻重</div></div>
+    <div class="states">
+      <div class="st priority"><div class="st-t">优先人工复核</div><div class="st-d">命中风险信号，这个病例先看</div></div>
+      <div class="st need_more"><div class="st-t">需补充评估</div><div class="st-d">有缺项或前后不一致，先补再判</div></div>
+      <div class="st pending_input"><div class="st-t">待补录</div><div class="st-d">面诊信息还没录，报告不成立</div></div>
+      <div class="st routine"><div class="st-t">常规记录</div><div class="st-d">没命中任何信号，按常规流程走</div></div>
+    </div>
+  </div>
+
+  <div class="ft">
+    风险分层仅代表病例复核优先级，不等同于患病概率，也不构成诊断分级。量表结果不替代医师面诊与影像判断。<br>
+    颌·心 双轴分诊与随访 · 预研样例 · 全部患者信息均为虚构
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>颌·心 · 预研成果演示图索引</title>
+<style>
+  :root {
+    --paper: #F6FBF9; --surface: #FFF; --ink: #1E2F29; --ink-2: #4F635A; --ink-3: #84958C;
+    --moss: #38614F; --sage: #C2D5C8; --line: rgba(30,47,41,.11); --line-soft: rgba(30,47,41,.065);
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    --serif: Georgia, "Songti SC", serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 44px 0 72px; background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  .wrap { width: 1180px; margin: 0 auto; }
+  .hd { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .l { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 40px; height: 40px; border-radius: 11px; background: var(--moss); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; font-family: var(--serif); }
+  .n { font-size: 17px; font-weight: 600; letter-spacing: .04em; }
+  .s { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; letter-spacing: .05em; }
+  .r { text-align: right; font-size: 11.5px; color: var(--ink-3); line-height: 1.8; }
+
+  .cat { margin-top: 34px; }
+  .cat-hd { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .cat-no { font-family: var(--serif); font-size: 13px; color: var(--moss); letter-spacing: .08em; }
+  .cat-t { font-size: 16px; font-weight: 600; letter-spacing: .02em; }
+  .cat-n { font-size: 11.5px; color: var(--ink-3); }
+  .cat-d { font-size: 12px; color: var(--ink-2); line-height: 1.75; margin: 6px 0 16px; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .grid.one { grid-template-columns: 1fr; }
+
+  .card { background: var(--surface); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 26px rgba(30,47,41,.06); border: 1px solid var(--line-soft); display: flex; flex-direction: column; height: 100%; }
+  .shot { background: rgba(246,251,249,.9); padding: 14px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line-soft); flex: 1; }
+  .shot img { display: block; max-width: 100%; max-height: 460px; width: auto; border-radius: 8px; box-shadow: 0 6px 18px rgba(30,47,41,.1); }
+  .shot.tall img { max-height: 620px; }
+  .bd { padding: 15px 18px 18px; }
+  .cap { display: flex; align-items: baseline; gap: 9px; }
+  .cap-i { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; color: var(--moss); background: rgba(194,213,200,.35); padding: 2px 7px; border-radius: 5px; }
+  .cap-t { font-size: 13.5px; font-weight: 600; }
+  .cap-px { font-size: 10.5px; color: var(--ink-3); margin-left: auto; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .note { font-size: 12px; color: var(--ink-2); line-height: 1.8; margin-top: 9px; }
+  .note b { color: var(--ink); }
+  .use { font-size: 11px; color: var(--ink-3); margin-top: 9px; padding-top: 9px; border-top: 1px dashed var(--line-soft); line-height: 1.7; }
+  .ft { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 11px; color: var(--ink-3); line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <div class="l">
+      <div class="logo">颌</div>
+      <div>
+        <div class="n">颌·心 · 预研成果演示图</div>
+        <div class="s">DC/TMD 双轴分诊与随访 · 4 类 11 张 · 全部为真实系统截图</div>
+      </div>
+    </div>
+    <div class="r">
+      在线系统 hexin-web.app.workbuddy.host<br>
+      演示口令 hexin2026 · 患者号 90010001
+    </div>
+  </div>
+
+  <!-- 一 -->
+  <div class="cat">
+    <div class="cat-hd"><span class="cat-no">一</span><span class="cat-t">临床工作台演示版</span><span class="cat-n">5 张 · 医生一天的操作面</span></div>
+    <div class="cat-d">从登录后的总览，到单个病例的双轴核对，再到发号与签核留痕——一条完整动线。</div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="shot"><img src="01-临床工作台演示版/1-1 工作台总览.png" alt="工作台总览"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">1-1</span><span class="cap-t">工作台总览</span><span class="cap-px">2732×2660</span></div>
+          <div class="note">四格 KPI + 五步漏斗 + 11 例队列 + 右栏三块面板。<b>队列同时出现六种状态</b>，每条带进度条与命中条数，一眼看出今天卡在哪一步。</div>
+          <div class="use">用途：汇报第 2 页「医生每天看到什么」</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot"><img src="01-临床工作台演示版/1-2 病例详情-AxisII与命中依据.png" alt="AxII"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">1-2</span><span class="cap-t">病例详情 · Axis II 与命中依据</span><span class="cap-px">2732×1800</span></div>
+          <div class="note">四张量表分数条 + 三条复核提示，每条都写明 <b>规则编号 / 阈值 / 依据字段</b>。判定不是黑箱，可当场核对。</div>
+          <div class="use">用途：回答「系统凭什么判这个病例优先」</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot"><img src="01-临床工作台演示版/1-3 病例详情-AxisI面诊体征.png" alt="AxI"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">1-3</span><span class="cap-t">病例详情 · Axis I 面诊体征</span><span class="cap-px">2732×1800</span></div>
+          <div class="note">按 DC/TMD 结构录入：触诊部位、是否再现、主动/被动张口、侧方与前伸、杂音、锁结、影像。复核意见与随访计划是<b>结构化字段</b>。</div>
+          <div class="use">用途：说明面诊记录如何落库，配合 1-2 讲双轴合并</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot"><img src="01-临床工作台演示版/1-4 发就诊号.png" alt="发号"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">1-4</span><span class="cap-t">发就诊号</span><span class="cap-px">2732×1800</span></div>
+          <div class="note">上面填称呼，下面可填<b>医院系统就诊号</b>：填了直接当登录号，留空自动生成 8 位。这是医患之间唯一的交接动作。</div>
+          <div class="use">用途：讲流程闭环（谁发号 → 谁填表 → 谁签核）</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot"><img src="01-临床工作台演示版/1-5 已签核病例.png" alt="已签核"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">1-5</span><span class="cap-t">已签核病例</span><span class="cap-px">2732×1800</span></div>
+          <div class="note">Axis I 全部只读冻结，复核意见、随访计划、签核人时间全部留痕。<b>签核后患者端答案锁定</b>，随访安排落到人。</div>
+          <div class="use">用途：讲「签核意味着什么」与不可篡改</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二 -->
+  <div class="cat">
+    <div class="cat-hd"><span class="cat-no">二</span><span class="cat-t">双端页面示意图</span><span class="cat-n">4 张 · 医生端与患者端</span></div>
+    <div class="cat-d">同一个链接、同一个登录框，靠输入凭证自动分流：科室口令进工作台，就诊号进自评页。</div>
+
+    <div class="grid one">
+      <div class="card">
+        <div class="shot"><img src="02-双端页面示意图/2-1 双端总览.png" alt="双端总览"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">2-1</span><span class="cap-t">双端总览 · 一道门，两端各管各的</span><span class="cap-px">3860×2400</span></div>
+          <div class="note">左侧医生端整页工作台，右侧患者端手机首屏，背后是同一套数据。<b>患者看不到任何医生界面，医生也不会被患者页面打扰。</b></div>
+          <div class="use">用途：汇报首页或架构页，一张图替代大段文字</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="card">
+        <div class="shot tall"><img src="02-双端页面示意图/2-2 患者端首屏.png" alt="患者首屏"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">2-2</span><span class="cap-t">患者端首屏</span><span class="cap-px">1170×2532</span></div>
+          <div class="note">「你好，林女士。本次就诊号：90010011」+ 三句话边界说明：仅记录主观感受、体征由医生当面检查、本问卷无需填写。</div>
+          <div class="use">用途：讲患者体验与知情边界</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot tall"><img src="02-双端页面示意图/2-3 患者端量表.png" alt="患者量表"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">2-3</span><span class="cap-t">患者端量表</span><span class="cap-px">1170×2532</span></div>
+          <div class="note">chips 点选 + 常驻进度条。题目直接跑小程序同一份 <b>data/psych.js</b>，网页不重写题目、不重设计分。</div>
+          <div class="use">用途：说明「一套量表两端共用」，无双维护</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="shot tall"><img src="02-双端页面示意图/2-4 患者端结果.png" alt="患者结果"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">2-4</span><span class="cap-t">患者端结果</span><span class="cap-px">1170×3261</span></div>
+          <div class="note">四个分数条 + 「小提示」四条建议，底部只有「再做一遍」。<b>提交即定稿，没有改答案的入口</b>；分数旁始终标着「自评，不是诊断」。</div>
+          <div class="use">用途：讲数据可信度边界——给线索，不给结论</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三 -->
+  <div class="cat">
+    <div class="cat-hd"><span class="cat-no">三</span><span class="cat-t">量表规则样例</span><span class="cat-n">1 张 · 判定口径全表</span></div>
+    <div class="cat-d">四张量表口径 + 15 条判定规则 + 四个复核状态，一页说完。</div>
+    <div class="grid one">
+      <div class="card">
+        <div class="shot"><img src="03-量表规则样例/3-1 量表与判定规则.png" alt="规则"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">3-1</span><span class="cap-t">量表与判定规则</span><span class="cap-px">2040×2736</span></div>
+          <div class="note">每条规则写明「触发条件 → 判定 → 说明」，如 <b>R-AX2-OBC：OBC-21 &gt; 24 → 优先人工复核</b>。阈值集中定义在一处，网页端与小程序共用同一份代码。</div>
+          <div class="use">用途：评审会回答「判定依据是什么」，直接翻这一页</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四 -->
+  <div class="cat">
+    <div class="cat-hd"><span class="cat-no">四</span><span class="cat-t">虚构评估报告样张</span><span class="cat-n">1 张 · 交付物形态</span></div>
+    <div class="cat-d">从主诉到签核栏，一页到底的完整报告。</div>
+    <div class="grid one">
+      <div class="card">
+        <div class="shot"><img src="04-虚构评估报告样张/4-1 双轴评估报告.png" alt="报告"></div>
+        <div class="bd">
+          <div class="cap"><span class="cap-i">4-1</span><span class="cap-t">双轴评估报告</span><span class="cap-px">1920×3234</span></div>
+          <div class="note">主诉、Axis I 检查、Axis II 分数、规则命中、风险分层、医师意见、随访计划、签核栏齐备。报告里同时保留<b>机器判的</b>（可追溯）与<b>医生定的</b>（人工签核）两层，不混淆。</div>
+          <div class="use">用途：给临床或伦理评审看「最后产出长什么样」</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ft">
+    截图取自本地运行的真实系统，连的是小程序同一套云数据库，未做任何前端伪造。演示病例 10 例（90010001–90010010）+ 现场发号 1 例（90010011），覆盖六种状态与三类签核结果。<br>
+    规则页与报告页为可访问静态页：<b>/demo/rules.html</b>、<b>/demo/report.html</b>。演示数据仅用于预研展示，正式投用前需清空 web:demo% 与 900100% 开头的记录。
+  </div>
+</div>
+</body>
+</html>

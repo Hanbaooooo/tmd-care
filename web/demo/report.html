@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>颌·心 · 双轴评估报告（虚构样张）</title>
+<style>
+  :root {
+    --paper: #F6FBF9; --surface: #FFFFFF; --ink: #1E2F29; --ink-2: #4F635A; --ink-3: #84958C;
+    --moss: #38614F; --sage-bg: rgba(194, 213, 200, 0.28); --line: rgba(30, 47, 41, 0.11);
+    --line-soft: rgba(30, 47, 41, 0.065); --note: #5C7A85; --note-bg: rgba(92, 122, 133, 0.1);
+    --alert: #96564A; --alert-bg: rgba(150, 86, 74, 0.1); --caution: #8A6C42; --caution-bg: rgba(192, 161, 112, 0.18);
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    --serif: Georgia, "Songti SC", serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 40px 0 56px; background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  .sheet { width: 860px; margin: 0 auto; background: var(--surface); border-radius: 18px; box-shadow: 0 14px 44px rgba(30, 47, 41, 0.08); padding: 34px 40px 30px; }
+
+  .hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 18px; border-bottom: 1.5px solid var(--ink); }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 42px; height: 42px; border-radius: 12px; background: var(--moss); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 21px; font-family: var(--serif); }
+  .bname { font-size: 16px; font-weight: 600; letter-spacing: 0.04em; }
+  .bsub { font-size: 11px; color: var(--ink-3); margin-top: 3px; letter-spacing: 0.05em; }
+  .hd-r { text-align: right; }
+  .rt { font-size: 19px; font-weight: 600; letter-spacing: 0.06em; }
+  .rs { font-size: 11px; color: var(--ink-3); margin-top: 7px; line-height: 1.8; }
+
+  .pt { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .pt > div { padding: 10px 12px; border-right: 1px solid var(--line-soft); }
+  .pt > div:last-child { border-right: 0; }
+  .pt-k { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; }
+  .pt-v { font-size: 13px; margin-top: 4px; font-weight: 500; }
+  .pt-v.mono { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.04em; }
+
+  .sec { margin-top: 22px; }
+  .sec-hd { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .sec-n { font-size: 13px; font-weight: 600; letter-spacing: 0.04em; }
+  .sec-x { font-size: 10.5px; color: var(--ink-3); }
+  .sec-hd::after { content: ''; flex: 1; height: 1px; background: var(--line-soft); margin-left: 4px; }
+
+  .cc { font-size: 12.5px; line-height: 1.85; color: var(--ink-2); }
+  .cc b { color: var(--ink); }
+
+  .ax1 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cell { background: rgba(246, 251, 249, 0.85); border-radius: 11px; padding: 11px 13px; }
+  .cell-k { font-size: 10px; color: var(--ink-3); letter-spacing: 0.05em; }
+  .cell-v { font-size: 12.5px; margin-top: 5px; line-height: 1.6; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; background: var(--sage-bg); color: var(--moss); margin: 2px 4px 2px 0; }
+  .tag.hot { background: var(--alert-bg); color: var(--alert); }
+
+  .ax2 { display: grid; gap: 11px; }
+  .row { display: grid; grid-template-columns: 168px 1fr 122px; align-items: center; gap: 12px; }
+  .row-n { font-size: 12px; color: var(--ink-2); }
+  .bar { height: 7px; border-radius: 999px; background: rgba(30, 47, 41, 0.07); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: var(--moss); }
+  .bar i.caution { background: #C0A170; }
+  .bar i.alert { background: var(--alert); }
+  .row-v { font-size: 12px; text-align: right; white-space: nowrap; }
+  .row-v span { color: var(--ink-3); font-size: 10.5px; margin-left: 5px; display: inline-block; }
+
+  .hits { display: grid; gap: 8px; }
+  .hit { border-left: 3px solid var(--alert); background: rgba(150, 86, 74, 0.045); border-radius: 0 10px 10px 0; padding: 10px 14px; }
+  .hit-t { font-size: 12.5px; font-weight: 600; }
+  .hit-d { font-size: 11.5px; color: var(--ink-2); line-height: 1.7; margin-top: 4px; }
+  .hit-m { font-size: 10px; color: var(--ink-3); margin-top: 6px; letter-spacing: 0.04em; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  .verdict { display: flex; align-items: center; gap: 14px; background: var(--alert-bg); border-radius: 12px; padding: 14px 18px; margin-top: 4px; }
+  .verdict-b { font-size: 15px; font-weight: 600; color: var(--alert); white-space: nowrap; }
+  .verdict-d { font-size: 11.5px; color: var(--ink-2); line-height: 1.7; }
+
+  .note { background: rgba(246, 251, 249, 0.9); border-radius: 12px; padding: 14px 16px; font-size: 12.5px; line-height: 1.85; color: var(--ink-2); }
+  .note-k { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; margin-bottom: 6px; }
+
+  .sign { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 6px; }
+  .sign > div { border-top: 1px solid var(--line); padding-top: 9px; }
+  .sign-k { font-size: 10px; color: var(--ink-3); letter-spacing: 0.06em; }
+  .sign-v { font-size: 12.5px; margin-top: 5px; }
+
+  .ft { margin-top: 22px; padding-top: 13px; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); line-height: 1.9; }
+  .mark { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; background: rgba(30,47,41,.06); color: var(--ink-3); letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="hd">
+    <div class="brand">
+      <div class="logo">颌</div>
+      <div>
+        <div class="bname">颌·心 · 口腔颌面疼痛专科</div>
+        <div class="bsub">DC/TMD 双轴分诊与随访</div>
+      </div>
+    </div>
+    <div class="hd-r">
+      <div class="rt">双轴评估报告</div>
+      <div class="rs">报告编号 HX-261123-0001<br>生成时间 2026-11-23 00:40</div>
+    </div>
+  </div>
+
+  <div class="pt">
+    <div><div class="pt-k">就诊号</div><div class="pt-v mono">90010001</div></div>
+    <div><div class="pt-k">患者</div><div class="pt-v">王女士</div></div>
+    <div><div class="pt-k">性别 / 年龄</div><div class="pt-v">女 · 42</div></div>
+    <div><div class="pt-k">就诊日期</div><div class="pt-v">2026-11-23</div></div>
+    <div><div class="pt-k">接诊医师</div><div class="pt-v">医生</div></div>
+    <div><div class="pt-k">来源</div><div class="pt-v">门诊 · 候诊自评</div></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">主诉与现病史</div><div class="sec-x">患者自述</div></div>
+    <div class="cc">
+      右侧面颊疼痛 <b>3 个月</b>，晨起时张口发紧，咀嚼硬物后加重。近一个月白天工作紧张时，自觉<b>牙齿不自觉咬紧</b>，夜间偶有磨牙（家属述）。疼痛可自行缓解，未服止痛药。无外伤史，无正畸治疗史。
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">Axis I · 面诊检查</div><div class="sec-x">医师录入 · 必填 7 项齐全</div></div>
+    <div class="ax1">
+      <div class="cell">
+        <div class="cell-k">熟悉性疼痛部位</div>
+        <div class="cell-v"><span class="tag hot">右侧咬肌</span><span class="tag hot">右关节区</span></div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">是否再现主诉疼痛</div>
+        <div class="cell-v">再现</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">最大主动 / 被动张口</div>
+        <div class="cell-v"><b>44</b> / 47 mm</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">侧方运动（右 / 左）</div>
+        <div class="cell-v">8 / 7 mm</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">前伸运动</div>
+        <div class="cell-v">6 mm</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">关节杂音（右 / 左）</div>
+        <div class="cell-v">弹响 / 无</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">锁结</div>
+        <div class="cell-v">无 · 近一个月 0 次</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">影像</div>
+        <div class="cell-v">CBCT</div>
+      </div>
+      <div class="cell">
+        <div class="cell-k">影像结论</div>
+        <div class="cell-v">右侧关节盘前移位，可复</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">Axis II · 自评量表</div><div class="sec-x">患者候诊自填 · 40 题</div></div>
+    <div class="ax2">
+      <div class="row"><div class="row-n">口腔行为清单 OBC-21</div><div class="bar"><i class="alert" style="width:45%"></i></div><div class="row-v">38 / 84<span>高</span></div></div>
+      <div class="row"><div class="row-n">广泛性焦虑 GAD-7</div><div class="bar"><i class="caution" style="width:67%"></i></div><div class="row-v">14 / 21<span>中度</span></div></div>
+      <div class="row"><div class="row-n">情绪筛查 PHQ-4</div><div class="bar"><i class="caution" style="width:67%"></i></div><div class="row-v">8 / 12<span>中度</span></div></div>
+      <div class="row"><div class="row-n">下颌功能受限 JFLS-8</div><div class="bar"><i style="width:42%"></i></div><div class="row-v">4.2 / 10<span>轻度受限</span></div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">规则命中依据</div><div class="sec-x">共 3 条 · rules-1.0</div></div>
+    <div class="hits">
+      <div class="hit">
+        <div class="hit-t">口腔行为清单偏高</div>
+        <div class="hit-d">OBC 38/84，处于「高」档。提示存在较频繁的口腔不良行为，需在面诊时确认并给出针对性建议。</div>
+        <div class="hit-m">R-AX2-OBC · 阈值 OBC-21 &gt; 24 · 依据 obc</div>
+      </div>
+      <div class="hit">
+        <div class="hit-t">焦虑评分达到中度以上</div>
+        <div class="hit-d">GAD-7 14/21。情绪因素可能参与疼痛维持，建议面诊时关注，必要时转心理支持。</div>
+        <div class="hit-m">R-AX2-GAD7 · 阈值 GAD-7 ≥ 10 · 依据 gad7</div>
+      </div>
+      <div class="hit">
+        <div class="hit-t">情绪筛查达到中度以上</div>
+        <div class="hit-d">PHQ-4 8/12。抑郁与焦虑症状同时存在，建议纳入复核。</div>
+        <div class="hit-m">R-AX2-PHQ4 · 阈值 PHQ-4 ≥ 6 · 依据 phq4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">风险分层</div><div class="sec-x">四类状态之一</div></div>
+    <div class="verdict">
+      <div class="verdict-b">优先人工复核</div>
+      <div class="verdict-d">命中风险信号 3 条，建议优先复核，确认是否需要转诊。此分层只表示复核先后顺序，不代表患病概率，也不构成诊断分级。</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">医师意见</div></div>
+    <div class="note">
+      <div class="note-k">复核结论</div>
+      已核对 Axis I 体征与 Axis II 自评：右侧咬肌及右关节区可再现主诉疼痛，最大主动张口 44 mm，CBCT 提示右侧关节盘前移位（可复）。OBC 38/84 偏高、GAD-7 14/21 中度，风险分层与主诉一致。建议行为治疗联合咬合板，4 周复评。
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-n">随访计划</div></div>
+    <div class="note">
+      <div class="note-k">下一步安排</div>
+      2 周后电话随访，复评 NRS 与最大主动张口；4 周门诊复评咬合板佩戴情况。如出现张口受限加重或闭锁，随时复诊。
+    </div>
+  </div>
+
+  <div class="sign">
+    <div><div class="sign-k">接诊医师</div><div class="sign-v">医生</div></div>
+    <div><div class="sign-k">签核时间</div><div class="sign-v">2026-11-23 00:40</div></div>
+    <div><div class="sign-k">签核方式</div><div class="sign-v">修改后采纳</div></div>
+  </div>
+
+  <div class="ft">
+    <span class="mark">虚构样张</span>
+    风险分层仅代表病例复核优先级，不等同于患病概率，也不构成诊断分级。量表结果不替代医师面诊与影像判断。<br>
+    本报告为预研演示用途，患者信息、影像结论与分数均为虚构，不涉及任何真实就诊记录。
+  </div>
+</div>
+</body>
+</html>

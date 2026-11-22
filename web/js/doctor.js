@@ -100,6 +100,8 @@
 
     return Object.assign({}, r, {
       visit_no: r.visit_no || (r.report_id ? '未报到 #' + r.report_id : '—'),
+      // 队列接口给的是 signed_by，这里统一成 doctor_name，模板只认一个名字
+      doctor_name: r.doctor_name || r.signed_by || '',
       bucket: bucket,
       percent: p.percent,
       ax2: p.ax2,
@@ -380,6 +382,27 @@
             esc(r.follow_up) + '</span></div>';
         }).join('')
       : '<div class="empty" style="padding:16px 0">还没有排随访的病例。<br>签核时填了随访计划会列在这里。</div>';
+
+    // 复核分层：四类状态 + 已签核，按数量占比画条，一眼看出今天卡在哪一步
+    var dist = [
+      { k: '优先复核', tone: 'alert', n: state.rows.filter(function (r) { return !r.signed_at && r.rule_state === 'priority'; }).length },
+      { k: '需补充', tone: 'caution', n: state.rows.filter(function (r) { return !r.signed_at && r.rule_state === 'need_more'; }).length },
+      { k: '待补录', tone: 'note', n: state.rows.filter(function (r) { return !r.signed_at && r.rule_state === 'pending_input'; }).length },
+      { k: '待签核', tone: 'moss', n: state.rows.filter(function (r) { return !r.signed_at && r.bucket === 'sign'; }).length },
+      { k: '已签核', tone: 'moss', n: state.rows.filter(function (r) { return !!r.signed_at; }).length }
+    ];
+    var maxN = Math.max.apply(null, dist.map(function (d) { return d.n; }).concat([1]));
+    if ($('dist')) {
+      $('distTotal').textContent = '共 ' + state.rows.length + ' 例';
+      $('dist').innerHTML = dist
+        .map(function (d) {
+          var w = d.n ? Math.max(6, Math.round((d.n / maxN) * 100)) : 0;
+          return '<div class="dist-row"><span class="dist-k">' + d.k + '</span>' +
+            '<span class="dist-bar"><i class="' + d.tone + '" style="width:' + w + '%"></i></span>' +
+            '<span class="dist-n">' + d.n + '</span></div>';
+        })
+        .join('');
+    }
   }
 
   /* ---------------- 抽屉 ---------------- */
