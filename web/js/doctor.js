@@ -128,7 +128,7 @@
      前端不写死口令，也不判断角色，只按 res.role 走。 */
   var LOGIN_REASON = {
     empty: '请填口令 / 就诊号和姓名',
-    bad_key: '口令或就诊号不对：医生输科室口令，患者输 8 位就诊号',
+    bad_key: '口令或就诊号不对：医生输科室口令，患者输医生给的就诊号',
     no_visit: '这个就诊号不存在，找医生核对一下',
     name_mismatch: '姓名和这个就诊号对不上，请确认是不是本人',
     need_name: '请填写姓名'
@@ -309,7 +309,7 @@
         '<div class="empty">' +
         (state.rows.length
           ? '这一栏是空的，换个筛选看看。'
-          : '还没有就诊记录。<br>点右上角「发就诊号」给患者一串 8 位数字，患者在同一道门输号 + 姓名填完自评后，这里刷新就能看到。') +
+          : '还没有就诊记录。<br>点右上角「发就诊号」，有医院就诊号就照填、没有自动生成，患者在同一道门输号 + 姓名填完自评后，这里刷新就能看到。') +
         '</div>';
       return;
     }
@@ -862,6 +862,7 @@
     $('nvResult').classList.add('hidden');
     $('nvErr').textContent = '';
     $('nvName').value = '';
+    $('nvHis').value = '';
     $('nvGen').disabled = false;
   }
 
@@ -873,22 +874,30 @@
   $('nvGen').addEventListener('click', function () {
     if (!state.code) return;
     var name = ($('nvName').value || '').trim();
+    var his = ($('nvHis').value || '').trim();
     $('nvGen').disabled = true;
     $('nvErr').textContent = '';
-    HexinCloud.rpc('tmd_desk_new_visit', { p_code: state.code, p_name: name })
+    HexinCloud.rpc('tmd_desk_new_visit', { p_code: state.code, p_name: name, p_his_no: his })
       .then(function (res) {
         if (!res || !res.visit_no) throw new Error('发号失败');
         lastNo = res.visit_no;
         $('nvNo').textContent = res.visit_no;
-        $('nvHint').textContent = name
+        var head = res.from_his ? '已绑定医院就诊号。' : '已生成就诊号。';
+        $('nvHint').textContent = head + (name
           ? '已登记称呼「' + name + '」，患者进门时必须填一样的姓名。'
-          : '称呼留空了，患者第一次进门时自己填，之后这个号只认那个姓名。';
+          : '称呼留空了，患者第一次进门时自己填，之后这个号只认那个姓名。');
         $('nvForm').classList.add('hidden');
         $('nvResult').classList.remove('hidden');
         loadQueue(true);
       })
       .catch(function (err) {
-        $('nvErr').textContent = err.message || '发号失败';
+        var m = String((err && (err.code || err.message)) || '');
+        $('nvErr').textContent =
+          /dup_visit_no/.test(m)
+            ? '这个就诊号已经发过一次了，换一个，或让患者用原来的号进门。'
+            : /bad_his_no/.test(m)
+            ? '医院就诊号只能用数字、字母和短横线，4–24 位。'
+            : err.message || '发号失败';
       })
       .then(function () {
         $('nvGen').disabled = false;
@@ -930,7 +939,7 @@
         '<div class="no">' +
         esc(lastNo) +
         '</div>' +
-        '<div class="ft">打开就诊入口 → 输入这串号码 + 你的姓名 → 填写候诊自评<br>约 3 分钟，提交后医生就能看到</div>' +
+        '<div class="ft">打开就诊入口 → 输入这个号 + 你的姓名 → 填写候诊自评<br>约 3 分钟，提交后医生就能看到</div>' +
         '</body></html>'
     );
     w.document.close();

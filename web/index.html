@@ -36,7 +36,7 @@
     <h1 class="gate-h">就诊入口</h1>
     <p class="gate-p">
       医生输<b>科室口令 + 姓名</b> → 临床工作台；<br>
-      患者输<b>就诊号（8 位数字）+ 姓名</b> → 候诊自评。
+      患者输<b>就诊号 + 姓名</b> → 候诊自评。
     </p>
     <form id="gateForm">
       <label class="field">
@@ -78,7 +78,6 @@
       <button class="nav-item on" data-jump="top"><span class="nav-dot"></span>工作台</button>
       <button class="nav-item" data-jump="queue"><span class="nav-dot"></span>患者队列</button>
       <button class="nav-item" data-jump="rail"><span class="nav-dot"></span>智能提醒</button>
-      <button class="nav-item" data-jump="howto"><span class="nav-dot"></span>使用说明</button>
     </nav>
     <div class="side-foot">
       队列只含本科室经手的就诊。<br>
@@ -140,9 +139,8 @@
       </aside>
     </div>
 
-    <div class="doc-disc" id="howto">
-      风险分层仅代表病例复核优先级，不等同于患病概率，也不构成诊断分级。<br>
-      使用说明：点「发就诊号」生成一串数字，连同患者姓名一起告诉患者 → 患者在同一道门输入就诊号 + 姓名填写自评 → 这里点「刷新」就能看到 → 打开病例核对分项与命中依据 → 填写复核意见与随访计划后签核下发。
+    <div class="doc-disc">
+      风险分层仅代表病例复核优先级，不等同于患病概率，也不构成诊断分级。
     </div>
   </main>
 </div>
@@ -189,18 +187,23 @@
 
     <div id="nvForm">
       <p class="tip" style="margin:8px 0 12px">
-        生成一串 8 位数字给患者。<b>姓名可以先不填</b>，患者第一次进门时自己填，之后这个号就只认这个姓名。
+        <b>患者已在医院系统有就诊号</b>，填在下面，患者就用那个号进门；<b>没有就留空</b>，这里生成一串 8 位数字。
+        姓名可以先不填，患者第一次进门时自己填，之后这个号只认这个姓名。
       </p>
       <label class="field">
         <span class="field-k">患者称呼（可不填）</span>
         <input class="input" id="nvName" type="text" maxlength="16" autocomplete="off" placeholder="如：王女士；留空则患者自己填">
+      </label>
+      <label class="field">
+        <span class="field-k">医院就诊号（可不填，填了就直接用它）</span>
+        <input class="input" id="nvHis" type="text" maxlength="24" autocomplete="off" placeholder="如：20261123001；留空自动生成 8 位">
       </label>
       <div class="gate-err" id="nvErr"></div>
       <button class="btn btn-primary" id="nvGen" style="width:100%;height:44px;margin-top:6px">生成就诊号</button>
     </div>
 
     <div id="nvResult" class="hidden">
-      <p class="tip" style="margin:8px 0 6px">把这串号码告诉患者，让他在就诊入口输入：</p>
+      <p class="tip" style="margin:8px 0 6px">把这个号告诉患者，让他在就诊入口输入：</p>
       <div class="nv-no" id="nvNo">—</div>
       <p class="tip" id="nvHint" style="margin:10px 0 14px"></p>
       <div class="qr-actions">

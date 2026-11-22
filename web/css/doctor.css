@@ -394,7 +394,27 @@ body.doc-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 296px;
   gap: 16px;
-  align-items: start;
+  align-items: stretch;
+}
+
+/* 左栏与右栏底部对齐：队列卡片拉到与右侧两卡合计同高，空态在卡片内垂直居中 */
+#queue {
+  display: flex;
+  flex-direction: column;
+}
+
+#queueBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#queueBody > .empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rail {
@@ -405,6 +425,11 @@ body.doc-body {
 
 .rail .panel {
   margin-top: 0;
+}
+
+/* 侧栏最后一块吸收多余高度：队列变长时右栏也能与左栏底边齐平 */
+.rail > .panel:last-child {
+  flex: 1;
 }
 
 /* ---------- 五步漏斗 ---------- */
