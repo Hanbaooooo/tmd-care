@@ -152,7 +152,7 @@
     }).join('');
 
     html +=
-      '<p class="disc">四段答完之后点下面的「提交」。提交后医生在诊室就能看到，你还可以回来改，直到医生签核为止。</p>';
+      '<p class="disc">四段答完之后点下面的「提交」。提交即定稿，答案不再改动；想重来只能整份重填。</p>';
 
     $('form').innerHTML = html;
   }
@@ -356,32 +356,28 @@
       '<div class="p-kv"><span>就诊号</span><span class="p-kv-v">' +
       esc((ok && ok.visit_no) || (session && session.visit_no) || '') +
       '</span></div>' +
-      '<div class="p-kv"><span>本机留档</span><span class="p-kv-v">可以回来改</span></div>' +
       '</div>' +
       '<div class="card">' +
       '<div class="p-sec-hd"><div class="p-sec-t">这次的分</div><div class="p-sec-n">自评，不是诊断</div></div>' +
       rows +
       '</div>' +
-      (notes ? '<div class="card">' + notes + '</div>' : '') +
-      '<button class="btn btn-ghost" id="btnEdit" style="width:100%;height:44px;margin-top:14px">回去改答案</button>' +
-      '<p class="disc">分数只代表你最近这段时间的主观感受。是不是关节或肌肉的问题，要医生按一按、量一量才知道。</p>';
+      (notes
+        ? '<div class="card"><div class="p-sec-hd"><div class="p-sec-t">小提示</div></div>' + notes + '</div>'
+        : '') +
+      '<button class="btn btn-ghost" id="btnRedo" style="width:100%;height:44px;margin-top:14px">再做一遍</button>' +
+      '<p class="disc">提交后的答案不再改动。分数只代表你最近这段时间的主观感受，是不是关节或肌肉的问题，要医生按一按、量一量才知道。</p>';
 
-    $('btnEdit').addEventListener('click', function () {
-      answers = restoreAnswers(result.answers);
+    // 已提交的答案锁定，不提供「回去改」；想重来就整份重填
+    $('btnRedo').addEventListener('click', function () {
+      if (!window.confirm('再做一遍会从头重新填写，这次提交的答案不会保留。要继续吗？')) return;
+      answers = {};
+      clearDraft();
       renderForm();
       showForm();
+      window.scrollTo(0, 0);
     });
 
     window.scrollTo(0, 0);
-  }
-
-  // 编辑器回来时把上次的作答铺回去，避免全部清空重答
-  function restoreAnswers(src) {
-    var out = {};
-    Object.keys(src || {}).forEach(function (k) {
-      if (src[k] !== null && src[k] !== undefined) out[k] = src[k];
-    });
-    return out;
   }
 
   /* ---------------- 事件 ---------------- */
@@ -435,7 +431,12 @@
       location.replace(withShare('./'));
       return;
     }
-    $('pWho').textContent = session.name || '你好';
+    if (session.name) {
+      $('pWho').textContent = session.name;
+    } else {
+      // 没有称呼时整段「你好，X。」去掉，只留「本次就诊号：…」
+      $('pWhoWrap').classList.add('hidden');
+    }
     $('pNo').textContent = session.visit_no;
 
     var draft = loadDraft();
