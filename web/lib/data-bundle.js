@@ -12,7 +12,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const ORDER = ['scales', 'axis1', 'rules'];
+// psych 要在 scales 之后（它读 scales 的 OBC 版本常量），rules 在最后
+const ORDER = ['scales', 'psych', 'axis1', 'rules'];
 
 function build(dataDir) {
   const parts = ORDER.map(function (name) {
@@ -35,6 +36,7 @@ function build(dataDir) {
     '\n' +
     '  window.HEXIN_DATA = {\n' +
     '    scales: reg.scales.exports,\n' +
+    '    psych: reg.psych.exports,\n' +
     '    axis1: reg.axis1.exports,\n' +
     '    rules: reg.rules.exports\n' +
     '  };\n' +

@@ -2,27 +2,60 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>颌·心 · 请用微信扫码进入小程序</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6FBF9">
+<title>颌·心 · 候诊自评</title>
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="doc-body">
-<div class="gate">
-  <div class="gate-card" style="text-align:center">
-    <div class="gate-brand" style="justify-content:center">
-      <div class="gate-logo">颌</div>
+<body>
+
+<div class="p-wrap">
+
+  <header class="p-head">
+    <div class="p-brand">
+      <div class="p-logo">颌</div>
       <div>
-        <div class="gate-name">颌·心</div>
-        <div class="gate-sub">DC/TMD 双轴智能分诊与随访</div>
+        <div class="p-brand-name">颌·心</div>
+        <div class="p-brand-sub">候诊自评 · 约 3 分钟</div>
       </div>
     </div>
-    <h1 class="gate-h" style="font-size:20px">请用微信扫码进入小程序</h1>
-    <p class="gate-p">
-      患者端已经回到微信小程序：诊台上的固定入口码扫一次就进，不需要在这里填写。
-      如果你是从旧的单次二维码打开本页，那张码已作废——请扫诊台上的固定码，或请医生在工作台里点「患者入口」重新出示。
-    </p>
-    <a class="btn btn-primary" href="./" style="display:block;line-height:44px;margin-top:18px;text-decoration:none">返回临床工作台</a>
+  </header>
+
+  <!-- ===== 开始前 ===== -->
+  <section id="intro">
+    <div class="card">
+      <p class="tip"><b id="pWho">—</b>，你好。本次就诊号 <b id="pNo">—</b>。</p>
+      <p class="tip">这份自评只记录你自己的感受，<b>不是诊断，也不给概率</b>。医生面诊时会对着它问，能少答一遍。</p>
+      <p class="tip">四段共 40 题，问的是焦虑、情绪、口腔习惯和下颌活动。<b>疼、响、张口这些症状由医生当面检查</b>，这里不用填。</p>
+      <p class="tip">答到一半关掉也没关系，答案留在这台手机上，下次接着填。</p>
+    </div>
+
+    <button class="btn btn-primary" id="btnBegin">开始填写</button>
+    <button class="btn btn-ghost" id="btnSwitch" style="width:100%;margin-top:10px">不是我 / 换个就诊号</button>
+
+    <p class="disc">本页只收集本次就诊的自评答案。答案存在本院工作台，不对外提供。</p>
+  </section>
+
+  <!-- ===== 量表 ===== -->
+  <section id="form" class="hidden"></section>
+
+  <!-- ===== 结果 ===== -->
+  <section id="result" class="hidden"></section>
+
+</div>
+
+<!-- 底部提交条 -->
+<div class="p-bar hidden" id="bar">
+  <div class="p-bar-in">
+    <div class="p-prog">
+      <div class="p-prog-bar"><div class="p-prog-in" id="progIn"></div></div>
+      <div class="p-prog-t" id="progT">0 / 40 题</div>
+    </div>
+    <button class="btn btn-primary" id="btnSubmit" disabled>提交</button>
   </div>
 </div>
+
+<script src="/api/data/core.js"></script>
+<script src="js/patient.js"></script>
 </body>
 </html>

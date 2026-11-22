@@ -1152,3 +1152,34 @@ body.doc-body {
   color: var(--ink-3);
   margin-top: 8px;
 }
+
+/* ---------- 发就诊号 ---------- */
+.nv-no {
+  font-family: var(--serif);
+  font-size: 42px;
+  letter-spacing: 0.16em;
+  text-align: center;
+  color: var(--moss);
+  background: var(--sage-bg);
+  border-radius: 14px;
+  padding: 18px 12px;
+  line-height: 1.2;
+}
+
+/* 可选的小程序码：只作补充，不顶掉固定的就诊入口码 */
+.qr-mini {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.qr-mini img {
+  width: 96px;
+  height: 96px;
+  display: block;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}

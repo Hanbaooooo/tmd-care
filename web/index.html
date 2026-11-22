@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>颌·心 · 临床工作台</title>
+<title>颌·心 · 就诊入口</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/doctor.css">
 </head>
@@ -19,31 +19,34 @@
         <div class="gate-sub">DC/TMD 双轴智能分诊与随访</div>
       </div>
     </div>
-    <h1 class="gate-h">临床工作台</h1>
+    <h1 class="gate-h">就诊入口</h1>
     <p class="gate-p">
-      本页仅限科室人员使用。输入科室口令进入工作台；患者不需要口令，用微信扫工作台里的固定「患者入口」码即可进入小程序。
+      一道门，输什么进什么。<br>
+      医生输<b>科室口令 + 姓名</b> → 临床工作台；<br>
+      患者输<b>就诊号（8 位数字）+ 姓名</b> → 候诊自评。<br>
+      就诊号由医生在工作台点「发就诊号」给你，不用扫码、不用小程序。
     </p>
     <form id="gateForm">
       <label class="field">
-        <span class="field-k">科室口令</span>
-        <input class="input" id="gateCode" type="password" autocomplete="current-password" placeholder="请输入科室口令" required>
+        <span class="field-k">口令 / 就诊号</span>
+        <input class="input" id="gateCode" type="text" autocomplete="off" spellcheck="false" placeholder="科室口令，或医生给的就诊号" required>
       </label>
       <label class="field">
-        <span class="field-k">接诊医师（显示在患者报告上，可留空）</span>
-        <input class="input" id="gateName" type="text" autocomplete="name" placeholder="如：张明">
+        <span class="field-k">姓名</span>
+        <input class="input" id="gateName" type="text" autocomplete="name" placeholder="医生填接诊医师姓名；患者填自己的称呼" required>
       </label>
       <div class="gate-err" id="gateErr"></div>
-      <button class="btn btn-primary" type="submit" id="gateBtn" style="width:100%;height:44px">进入工作台</button>
+      <button class="btn btn-primary" type="submit" id="gateBtn" style="width:100%;height:44px">进入</button>
     </form>
     <div class="gate-foot">
-      口令在服务端校验，不由浏览器判断；口令错三次以上仍会继续校验，请勿试猜。
+      口令在服务端校验，浏览器里没有答案；输错不会锁号，但请别试猜别人的就诊号。
     </div>
     <details class="gate-qr">
-      <summary>手机上用？扫这张码打开工作台</summary>
+      <summary>手机上用？扫这张码打开本页</summary>
       <div class="gate-qr-body">
-        <img src="assets/workbench-qr.png" alt="工作台入口二维码" width="168" height="168">
-        <p>这是<b>工作台</b>入口码，给科室同事在自己手机上打开用，扫完照样要输口令。<br>
-          <b>患者入口码不在这里</b>：进入工作台后点右上角「患者入口」。</p>
+        <img src="assets/workbench-qr.png" alt="就诊入口二维码" width="168" height="168">
+        <p>扫完还是这道门：<b>医生输口令，患者输就诊号</b>。<br>
+          患者不用另外找链接，也不用下小程序。</p>
       </div>
     </details>
   </div>
@@ -81,7 +84,8 @@
           <div class="who-r" id="clinicName">口腔颌面疼痛专科</div>
         </div>
         <button class="btn btn-ghost" id="btnRefresh">刷新</button>
-        <button class="btn btn-primary" id="btnQr">患者入口</button>
+        <button class="btn btn-ghost" id="btnNewVisit">发就诊号</button>
+        <button class="btn btn-ghost" id="btnQr">患者入口</button>
         <button class="btn btn-ghost" id="btnOut">退出</button>
       </div>
     </header>
@@ -126,7 +130,7 @@
 
     <div class="doc-disc" id="howto">
       风险分层仅代表病例复核优先级，不等同于患病概率，也不构成诊断分级。<br>
-      使用说明：把「患者入口」那张固定码打印贴在诊台 → 患者微信扫码进小程序、绑定本次就诊并填写自评 → 这里点「刷新」就能看到 → 打开病例核对分项与命中依据 → 填写复核意见与随访计划后签核下发。
+      使用说明：点「发就诊号」生成一串数字，连同患者姓名一起告诉患者 → 患者在同一道门输入就诊号 + 姓名填写自评 → 这里点「刷新」就能看到 → 打开病例核对分项与命中依据 → 填写复核意见与随访计划后签核下发。
     </div>
   </main>
 </div>
@@ -146,21 +150,53 @@
   </div>
 </aside>
 
-<!-- ============ 患者入口码（固定） ============ -->
+<!-- ============ 就诊入口（固定码）与小程序码（可选） ============ -->
 <div class="modal hidden" id="qrModal">
   <div class="modal-card">
     <div class="panel-t" style="font-size:16px">患者入口</div>
     <p class="tip" style="margin:8px 0 12px">
-      这张码固定不变，可打印贴在诊台。患者用微信扫码进入「颌·心」小程序，绑定本次就诊后填写自评，提交后回到本页刷新即可看到。
-      第一次用需要先上传小程序码：下载好图片后点「上传小程序码」，或者直接把图片按 Ctrl+V 粘贴 / 拖进上面的方框。
+      这张码固定不变，可打印贴在诊台。患者扫进来就是<b>同一道门</b>，输入医生给的就诊号 + 自己的姓名即可填写。
+      不再需要小程序码；下面那块只在你确实想同时用小程序时才上传。
     </p>
     <div class="qr-holder" id="qrHolder"></div>
     <div class="qr-url" id="qrUrl"></div>
+    <div class="qr-mini hidden" id="qrMini"></div>
     <div class="qr-actions">
-      <label class="btn btn-ghost" for="qrFile">上传小程序码</label>
+      <label class="btn btn-ghost" for="qrFile">上传小程序码（可选）</label>
       <input type="file" id="qrFile" accept="image/*" class="sr-only">
       <button class="btn btn-ghost" id="qrPrint" style="flex:1">打印</button>
       <button class="btn btn-primary" id="qrClose" style="flex:1">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 发就诊号 ============ -->
+<div class="modal hidden" id="nvModal">
+  <div class="modal-card">
+    <div class="panel-t" style="font-size:16px">发就诊号</div>
+
+    <div id="nvForm">
+      <p class="tip" style="margin:8px 0 12px">
+        生成一串 8 位数字给患者。<b>姓名可以先不填</b>，患者第一次进门时自己填，之后这个号就只认这个姓名。
+      </p>
+      <label class="field">
+        <span class="field-k">患者称呼（可不填）</span>
+        <input class="input" id="nvName" type="text" maxlength="16" autocomplete="off" placeholder="如：王女士；留空则患者自己填">
+      </label>
+      <div class="gate-err" id="nvErr"></div>
+      <button class="btn btn-primary" id="nvGen" style="width:100%;height:44px;margin-top:6px">生成就诊号</button>
+    </div>
+
+    <div id="nvResult" class="hidden">
+      <p class="tip" style="margin:8px 0 6px">把这串号码告诉患者，让他在就诊入口输入：</p>
+      <div class="nv-no" id="nvNo">—</div>
+      <p class="tip" id="nvHint" style="margin:10px 0 14px"></p>
+      <div class="qr-actions">
+        <button class="btn btn-ghost" id="nvCopy" style="flex:1">复制号码</button>
+        <button class="btn btn-ghost" id="nvPrint" style="flex:1">打印小条</button>
+        <button class="btn btn-primary" id="nvClose" style="flex:1">完成</button>
+      </div>
+      <button class="btn btn-ghost" id="nvAgain" style="width:100%;margin-top:8px">再发一个号</button>
     </div>
   </div>
 </div>

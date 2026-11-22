@@ -124,13 +124,42 @@
     }, 30000);
   }
 
-  function login(code, doctor) {
-    return HexinCloud.rpc('tmd_desk_login', { p_code: code }).then(function (res) {
-      if (!res || !res.ok) throw new Error('科室口令不正确');
-      state.code = code;
+  /* 一道门：服务端判定输进来的是科室口令还是就诊号，据此分流。
+     前端不写死口令，也不判断角色，只按 res.role 走。 */
+  var LOGIN_REASON = {
+    empty: '请填口令 / 就诊号和姓名',
+    bad_key: '口令或就诊号不对：医生输科室口令，患者输 8 位就诊号',
+    no_visit: '这个就诊号不存在，找医生核对一下',
+    name_mismatch: '姓名和这个就诊号对不上，请确认是不是本人',
+    need_name: '请填写姓名'
+  };
+
+  function login(key, name) {
+    return HexinCloud.rpc('tmd_portal_login', { p_key: key, p_name: name }).then(function (res) {
+      if (!res || !res.ok) {
+        throw new Error(LOGIN_REASON[(res && res.reason) || ''] || '登录没通过，请核对后重试');
+      }
+      if (res.role === 'patient') {
+        try {
+          localStorage.setItem(
+            'hexin_patient_session',
+            JSON.stringify({
+              visit_no: res.visit_no,
+              visit_id: res.visit_id,
+              name: res.name,
+              session: res.session,
+              at: Date.now()
+            })
+          );
+        } catch (e) {}
+        location.href = 'patient.html';
+        return;
+      }
+      // 医生：key 就是科室口令，后面队列 / 签核 / 发号都还要带它
+      state.code = key;
       state.clinic = res.clinic || '口腔颌面疼痛专科';
-      state.doctor = doctor || res.doctor || '';
-      sessionStorage.setItem('hexin_code', code);
+      state.doctor = res.display_name || '';
+      sessionStorage.setItem('hexin_code', key);
       if (state.doctor) sessionStorage.setItem('hexin_doctor', state.doctor);
       enter();
     });
@@ -138,12 +167,12 @@
 
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var code = $('gateCode').value.trim();
-    var doctor = $('gateName').value.trim();
-    if (!code) return;
+    var key = $('gateCode').value.trim();
+    var name = $('gateName').value.trim();
+    if (!key) return;
     $('gateBtn').disabled = true;
     $('gateErr').textContent = '';
-    login(code, doctor)
+    login(key, name)
       .catch(function (err) {
         $('gateErr').textContent = err.message || '登录失败';
       })
@@ -271,7 +300,7 @@
         '<div class="empty">' +
         (state.rows.length
           ? '这一栏是空的，换个筛选看看。'
-          : '还没有就诊记录。<br>让患者扫右上角「患者入口」里的固定码，在小程序里绑定就诊并提交后，这里刷新就能看到。') +
+          : '还没有就诊记录。<br>点右上角「发就诊号」给患者一串 8 位数字，患者在同一道门输号 + 姓名填完自评后，这里刷新就能看到。') +
         '</div>';
       return;
     }
@@ -668,46 +697,54 @@
     }
   });
 
-  /* ---------------- 患者入口（固定小程序码） ---------------- */
+  /* ---------------- 患者入口（固定就诊入口码） ---------------- */
 
-  // 这张码不随人变：同一张码，患者扫进来在小程序里绑定本次就诊。
-  // 来源两种：项目自带 assets/miniapp-qr.png，或医生上传一次后存在本机 localStorage。
+  // 一道门：这张码永远指向首页，患者扫进来输就诊号 + 姓名。
+  // localStorage 里那张小程序码只是可选补充，不能把固定码顶掉。
   var QR_KEY = 'hexin_miniapp_qr';
-  var QR_DEFAULT = 'assets/miniapp-qr.png';
+  var QR_DEFAULT = 'assets/workbench-qr.png';
 
-  function qrSrc() {
+  function savedMiniQr() {
     try {
-      var saved = localStorage.getItem(QR_KEY);
-      if (saved) return saved;
-    } catch (e) {}
-    return QR_DEFAULT;
+      return localStorage.getItem(QR_KEY) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function paintMiniQr() {
+    var src = savedMiniQr();
+    var box = $('qrMini');
+    if (!box) return;
+    if (!src) {
+      box.classList.add('hidden');
+      box.innerHTML = '';
+      return;
+    }
+    box.classList.remove('hidden');
+    box.innerHTML = '已上传的小程序码（可选）：<img src="' + src + '" alt="小程序码">';
   }
 
   function paintQr() {
-    var src = qrSrc();
     var probe = new Image();
     probe.onload = function () {
       $('qrHolder').classList.remove('is-empty');
-      $('qrHolder').innerHTML = '<img class="qr-img" src="' + src + '" alt="患者入口小程序码">';
-      $('qrUrl').textContent = '固定码 · 患者用微信扫码进入「颌·心」小程序';
+      $('qrHolder').innerHTML = '<img class="qr-img" src="' + QR_DEFAULT + '" alt="就诊入口二维码">';
+      $('qrUrl').textContent = '固定码 · 患者扫码进就诊入口，输就诊号 + 姓名';
       $('qrUrl').classList.remove('warn');
     };
     probe.onerror = function () {
       $('qrHolder').classList.add('is-empty');
       $('qrHolder').innerHTML =
         '<div class="qr-ph">' +
-        '<div class="qr-ph-t">还没有小程序码</div>' +
-        '<ol class="qr-steps">' +
-        '<li>小程序预览面板 → 右上角「分享」→ 找显示「已发布」的那一行</li>' +
-        '<li>悬停该行最右侧的二维码图标 → 点「下载」</li>' +
-        '<li>回来点「上传小程序码」，或按 Ctrl+V 直接粘贴</li>' +
-        '</ol>' +
-        '<div class="qr-ph-f">只需要做一次，存在本机浏览器里，之后一直用这张</div>' +
+        '<div class="qr-ph-t">入口码图片没读到</div>' +
+        '<div class="qr-ph-f">直接把本页链接发给患者也能进同一道门；下面的小程序码是可选的。</div>' +
         '</div>';
-      $('qrUrl').textContent = '也可以直接把这个图片文件拖到上面这个框里';
+      $('qrUrl').textContent = '也可以点「上传小程序码」放一张备用';
       $('qrUrl').classList.add('warn');
     };
-    probe.src = src;
+    probe.src = QR_DEFAULT;
+    paintMiniQr();
   }
 
   function saveQrFile(file) {
@@ -775,7 +812,7 @@
   });
 
   $('qrPrint').addEventListener('click', function () {
-    var src = qrSrc();
+    var src = QR_DEFAULT;
     var w = window.open('', '_blank');
     if (!w) {
       alert('浏览器拦住了打印窗口，请允许弹窗后重试');
@@ -787,14 +824,14 @@
         'h1{font-size:22px;font-weight:600;margin:0 0 6px}.sub{color:#5d6f68;font-size:13px;margin-bottom:26px}' +
         'img{width:260px;height:260px;image-rendering:pixelated;border:1px solid #dfe9e5;border-radius:12px;padding:10px}' +
         '.foot{margin-top:24px;font-size:12px;color:#5d6f68;line-height:1.9}</style></head><body>' +
-        '<h1>颌·心 · 候诊自评</h1>' +
+        '<h1>颌·心 · 就诊入口</h1>' +
         '<div class="sub">' +
         esc(state.clinic || '口腔颌面疼痛专科') +
         '</div>' +
         '<img src="' +
         src +
         '">' +
-        '<div class="foot">微信扫码 → 进入小程序 → 绑定本次就诊 → 按提示填写<br>填写约需 5 分钟，提交后医师端即可看到</div>' +
+        '<div class="foot">微信扫码 → 进入就诊入口 → 输入医生给的就诊号 + 自己的姓名 → 填写自评<br>填写约需 3 分钟，提交后医师端即可看到</div>' +
         '</body></html>'
     );
     w.document.close();
@@ -806,6 +843,98 @@
   $('qrClose').addEventListener('click', function () {
     $('qrModal').classList.add('hidden');
   });
+
+  /* ---------------- 发就诊号 ---------------- */
+
+  var lastNo = '';
+
+  function nvShowForm() {
+    $('nvForm').classList.remove('hidden');
+    $('nvResult').classList.add('hidden');
+    $('nvErr').textContent = '';
+    $('nvName').value = '';
+    $('nvGen').disabled = false;
+  }
+
+  $('btnNewVisit').addEventListener('click', function () {
+    nvShowForm();
+    $('nvModal').classList.remove('hidden');
+  });
+
+  $('nvGen').addEventListener('click', function () {
+    if (!state.code) return;
+    var name = ($('nvName').value || '').trim();
+    $('nvGen').disabled = true;
+    $('nvErr').textContent = '';
+    HexinCloud.rpc('tmd_desk_new_visit', { p_code: state.code, p_name: name })
+      .then(function (res) {
+        if (!res || !res.visit_no) throw new Error('发号失败');
+        lastNo = res.visit_no;
+        $('nvNo').textContent = res.visit_no;
+        $('nvHint').textContent = name
+          ? '已登记称呼「' + name + '」，患者进门时必须填一样的姓名。'
+          : '称呼留空了，患者第一次进门时自己填，之后这个号只认那个姓名。';
+        $('nvForm').classList.add('hidden');
+        $('nvResult').classList.remove('hidden');
+        loadQueue(true);
+      })
+      .catch(function (err) {
+        $('nvErr').textContent = err.message || '发号失败';
+      })
+      .then(function () {
+        $('nvGen').disabled = false;
+      });
+  });
+
+  $('nvCopy').addEventListener('click', function () {
+    if (!lastNo) return;
+    function done() {
+      $('nvCopy').textContent = '已复制';
+      setTimeout(function () {
+        $('nvCopy').textContent = '复制号码';
+      }, 1500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lastNo).then(done, function () {
+        $('nvHint').textContent = '复制不了，请手动记下号码：' + lastNo;
+      });
+    } else {
+      $('nvHint').textContent = '请手动记下号码：' + lastNo;
+    }
+  });
+
+  $('nvPrint').addEventListener('click', function () {
+    var w = window.open('', '_blank');
+    if (!w) {
+      alert('浏览器拦住了打印窗口，请允许弹窗后重试');
+      return;
+    }
+    w.document.write(
+      '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><title>颌·心 就诊号</title>' +
+        '<style>body{font-family:-apple-system,"PingFang SC",sans-serif;text-align:center;padding:56px 24px;color:#1c2b26}' +
+        'h1{font-size:20px;margin:0 0 18px}.no{font:40px Georgia,serif;letter-spacing:.16em;color:#38614F;margin:18px 0}' +
+        '.ft{font-size:12px;color:#5d6f68;line-height:2;margin-top:26px}</style></head><body>' +
+        '<h1>' +
+        esc(state.clinic || '口腔颌面疼痛专科') +
+        '</h1>' +
+        '<div>你的就诊号</div>' +
+        '<div class="no">' +
+        esc(lastNo) +
+        '</div>' +
+        '<div class="ft">打开就诊入口 → 输入这串号码 + 你的姓名 → 填写候诊自评<br>约 3 分钟，提交后医生就能看到</div>' +
+        '</body></html>'
+    );
+    w.document.close();
+    setTimeout(function () {
+      w.print();
+    }, 400);
+  });
+
+  $('nvClose').addEventListener('click', function () {
+    $('nvModal').classList.add('hidden');
+  });
+
+  $('nvAgain').addEventListener('click', nvShowForm);
 
   /* ---------------- 启动 ---------------- */
 

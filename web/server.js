@@ -21,13 +21,17 @@ const CLOUD_KEY =
   process.env.HEXIN_CLOUD_KEY ||
   'wbpk_zvQKo2tqFcVjHyRU3wojbq_Ys476JsYUzSoP8Pkxzst2iBgBelX6u64';
 
-// 只放行医生端用到的函数，别的一律不转发
+// 白名单：一道门分流 + 医生端 + 患者端。
+// 口令/就诊号的判定在数据库函数里做，前端不写死科室口令；患者没有口令，靠 session 认本机。
 const ALLOWED = new Set([
+  'tmd_portal_login',
+  'tmd_desk_new_visit',
   'tmd_desk_login',
   'tmd_desk_queue',
   'tmd_desk_sign',
   'tmd_desk_withdraw',
-  'tmd_desk_save_axis1'
+  'tmd_desk_save_axis1',
+  'tmd_patient_submit'
 ]);
 
 const MIME = {
