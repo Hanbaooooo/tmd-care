@@ -3,9 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* 发布平台网关靠 URL 上的 sharecode 种访问凭证。从应用面板/iframe 打开时
+   URL 常常是裸的，接口会被 403 挡掉。这里在最早期把凭证补回地址栏。 */
+(function () {
+  try {
+    var u = new URL(location.href);
+    if (!u.searchParams.has('sharecode') && !sessionStorage.getItem('hexin_sc_fix')) {
+      sessionStorage.setItem('hexin_sc_fix', '1');
+      u.searchParams.set('sharecode', 'UYTBFHUV4H');
+      location.replace(u.toString());
+    }
+  } catch (e) {}
+})();
+</script>
 <title>颌·心 · 就诊入口</title>
-<link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/doctor.css">
+<link rel="stylesheet" href="css/app.css?v=2312">
+<link rel="stylesheet" href="css/doctor.css?v=2312">
 </head>
 <body class="doc-body">
 
@@ -21,10 +35,8 @@
     </div>
     <h1 class="gate-h">就诊入口</h1>
     <p class="gate-p">
-      一道门，输什么进什么。<br>
       医生输<b>科室口令 + 姓名</b> → 临床工作台；<br>
-      患者输<b>就诊号（8 位数字）+ 姓名</b> → 候诊自评。<br>
-      就诊号由医生在工作台点「发就诊号」给你，不用扫码、不用小程序。
+      患者输<b>就诊号（8 位数字）+ 姓名</b> → 候诊自评。
     </p>
     <form id="gateForm">
       <label class="field">
@@ -38,8 +50,8 @@
       <div class="gate-err" id="gateErr"></div>
       <button class="btn btn-primary" type="submit" id="gateBtn" style="width:100%;height:44px">进入</button>
     </form>
-    <div class="gate-foot">
-      口令在服务端校验，浏览器里没有答案；输错不会锁号，但请别试猜别人的就诊号。
+    <div class="gate-foot gate-reenter">
+      打不开？<a href="?sharecode=UYTBFHUV4H&amp;r=1" id="btnReenter">重新进入</a>
     </div>
     <details class="gate-qr">
       <summary>手机上用？扫这张码打开本页</summary>
@@ -201,9 +213,9 @@
   </div>
 </div>
 
-<script src="/api/data/core.js"></script>
-<script src="js/axis1-form.js"></script>
-<script src="js/cloud.js"></script>
-<script src="js/doctor.js"></script>
+<script src="api/data/core.js?v=2312"></script>
+<script src="js/axis1-form.js?v=2312"></script>
+<script src="js/cloud.js?v=2312"></script>
+<script src="js/doctor.js?v=2312"></script>
 </body>
 </html>

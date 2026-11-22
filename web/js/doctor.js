@@ -152,7 +152,7 @@
             })
           );
         } catch (e) {}
-        location.href = 'patient.html';
+        location.href = HexinCloud.withShare('patient.html');
         return;
       }
       // 医生：key 就是科室口令，后面队列 / 签核 / 发号都还要带它
@@ -174,6 +174,15 @@
     $('gateErr').textContent = '';
     login(key, name)
       .catch(function (err) {
+        var raw = String((err && err.raw && err.raw.message) || '');
+        if (/gateway_blocked/.test(raw)) {
+          // 凭证没建立：自动带 sharecode 重载一次，重载后就能正常进了
+          try { sessionStorage.removeItem('hexin_sc_fix'); } catch (e) {}
+          var target = HexinCloud.withShare(location.pathname);
+          $('gateErr').textContent = '正在恢复访问…';
+          setTimeout(function () { location.replace(target); }, 400);
+          return;
+        }
         $('gateErr').textContent = err.message || '登录失败';
       })
       .then(function () {

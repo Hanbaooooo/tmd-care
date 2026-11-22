@@ -203,11 +203,26 @@
     return out;
   }
 
+  /* 网关要求 URL 带 sharecode 才种凭证，每个请求都补上，避免在预览 iframe 里被 403。 */
+  function withShare(p) {
+    try {
+      var u = new URL(p, location.href);
+      var m = /[?&]sharecode=([^&]+)/.exec(location.search);
+      if (!u.searchParams.has('sharecode')) {
+        u.searchParams.set('sharecode', m ? decodeURIComponent(m[1]) : 'UYTBFHUV4H');
+      }
+      return u.pathname + u.search + u.hash;
+    } catch (e) {
+      return p;
+    }
+  }
+
   function rpc(fn, payload) {
-    return fetch('/api/rpc/' + fn, {
+    return fetch(withShare('api/rpc/' + fn), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload || {})
+      body: JSON.stringify(payload || {}),
+      credentials: 'same-origin'
     }).then(function (res) {
       return res.text().then(function (text) {
         var data = {};
@@ -215,6 +230,12 @@
           data = JSON.parse(text);
         } catch (e) {}
         if (!res.ok) {
+          // 网关拦截时返回整页 HTML，不是 JSON；统一翻译成凭证问题，别把 HTML 显示出来
+          if ((res.status === 403 || res.status === 404 || res.status === 502) && /<(!doctype|html)/i.test(text)) {
+            var ge = new Error('gateway_blocked');
+            ge.code = 'gateway_blocked';
+            throw ge;
+          }
           var msg = String((data && (data.message || data.error)) || '');
           var err = new Error(msg || 'upstream_' + res.status);
           err.code = msg;
@@ -227,6 +248,9 @@
 
   function friendlyError(err) {
     var m = String((err && (err.code || err.message)) || '');
+    if (/gateway_blocked/.test(m)) {
+      return '页面访问凭证掉了。请回到就诊入口重新打开一次完整链接，答案还留在这台手机上。';
+    }
     if (/already_signed/.test(m)) {
       return '医生已经签核这份记录了，不能再改。有补充直接当面告诉医生。';
     }
@@ -245,7 +269,7 @@
   function submit() {
     if (submitting) return;
     if (!session) {
-      location.href = './';
+      location.href = withShare('./');
       return;
     }
     var left = TOTAL - answeredCount();
@@ -399,7 +423,7 @@
       localStorage.removeItem(SESSION_KEY);
       localStorage.removeItem(DRAFT_KEY);
     } catch (e) {}
-    location.href = './';
+    location.href = withShare('./');
   });
 
   /* ---------------- 启动 ---------------- */
@@ -408,7 +432,7 @@
     session = readSession();
     if (!session) {
       // 没在门口输过就诊号 + 姓名，直接退回那道门
-      location.replace('./');
+      location.replace(withShare('./'));
       return;
     }
     $('pWho').textContent = session.name || '你好';

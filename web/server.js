@@ -193,10 +193,14 @@ function serveStatic(pathname, res) {
       return res.end('404');
     }
     const type = MIME[path.extname(target).toLowerCase()] || 'application/octet-stream';
+    // 发布平台自己会缓存页面，浏览器也会缓存 JS/CSS。曾出现过「用户看到旧登录页、
+    // 旧脚本去调已不存在的路径 → 报 Not Found」。这里全部禁缓存，保证刷新即最新。
     res.writeHead(200, {
       'content-type': type,
       'content-length': stat.size,
-      'cache-control': path.extname(target) === '.html' ? 'no-cache' : 'public, max-age=300'
+      'cache-control': 'no-store, must-revalidate',
+      'pragma': 'no-cache',
+      'expires': '0'
     });
     fs.createReadStream(target).pipe(res);
   });
@@ -204,12 +208,17 @@ function serveStatic(pathname, res) {
 
 const server = http.createServer(function (req, res) {
   const url = new URL(req.url, 'http://127.0.0.1');
+  const p = url.pathname;
 
-  if (url.pathname.indexOf('/api/rpc/') === 0) {
+  // 发布平台的应用面板 / 预览 iframe 有时会把整个站点挂在一个路径前缀下
+  // （例如 /preview/xxx/index.html）。这时绝对 /api/... 会打到错误的根上返回
+  // Not Found，而相对 api/... 会带上前缀。两种都要能路由，所以用「查找」而非「开头匹配」。
+  const rpcAt = p.indexOf('/api/rpc/');
+  if (rpcAt !== -1) {
     if (req.method !== 'POST') {
       return sendJson(res, 405, { error: 'method_not_allowed' });
     }
-    const fn = url.pathname.slice('/api/rpc/'.length);
+    const fn = p.slice(rpcAt + '/api/rpc/'.length);
     return readBody(req, 256 * 1024)
       .then(function (body) {
         proxyRpc(fn, body, res);
@@ -219,15 +228,26 @@ const server = http.createServer(function (req, res) {
       });
   }
 
-  if (url.pathname === '/api/health') {
+  if (/(^|\/)api\/health$/.test(p)) {
     return sendJson(res, 200, { ok: true });
   }
 
-  if (url.pathname === '/api/data/core.js') {
+  if (/(^|\/)api\/data\/core\.js$/.test(p)) {
     return buildDataBundle(res);
   }
 
-  serveStatic(url.pathname, res);
+  // 静态文件同样可能带前缀：把 /preview/xxx/css/app.css 还原成 /css/app.css
+  const prefixMatch = /^(\/.*)\/(index\.html|patient\.html|assets\/|css\/|js\/)/.exec(p);
+  let staticPath = p;
+  if (prefixMatch && p !== '/' + prefixMatch[2]) {
+    const candidate = p.slice(prefixMatch[1].length);
+    if (candidate.indexOf('/css/') === 0 || candidate.indexOf('/js/') === 0 ||
+        candidate.indexOf('/assets/') === 0 || candidate === '/index.html' ||
+        candidate === '/patient.html') {
+      staticPath = candidate;
+    }
+  }
+  serveStatic(staticPath, res);
 });
 
 server.listen(PORT, '0.0.0.0', function () {

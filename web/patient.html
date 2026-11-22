@@ -4,8 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F6FBF9">
+<script>
+(function () {
+  try {
+    var u = new URL(location.href);
+    if (!u.searchParams.has('sharecode') && !sessionStorage.getItem('hexin_sc_fix')) {
+      sessionStorage.setItem('hexin_sc_fix', '1');
+      u.searchParams.set('sharecode', 'UYTBFHUV4H');
+      location.replace(u.toString());
+    }
+  } catch (e) {}
+})();
+</script>
 <title>颌·心 · 候诊自评</title>
-<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/app.css?v=2312">
 </head>
 <body>
 
@@ -55,7 +67,7 @@
   </div>
 </div>
 
-<script src="/api/data/core.js"></script>
-<script src="js/patient.js"></script>
+<script src="api/data/core.js?v=2312"></script>
+<script src="js/patient.js?v=2312"></script>
 </body>
 </html>
